@@ -1,0 +1,2161 @@
+@charset "UTF-8";
+
+/* =============================================================================
+   LETTERPRESS · 铅印
+   -----------------------------------------------------------------------------
+   一张正在被批注的校样。
+
+   · 蓝黑（--lp-ink-blue）= 结构与链接：链接、目录、章节编号、焦点。
+   · 朱红（--lp-vermilion）= 批注与标记：划线、勾选、题花、警示。
+   · 其余全是灰：纸、墨、发丝线。没有任何第三种彩色。
+
+   版面（阅读视图与实时预览同一套）：
+   · 行宽 34 字，行高 1.8，首行缩进两字，两端对齐；
+   · 左侧一条「版心线」，H2 在页边挂一枚朱红短标记（窗口 > 1200px 时）；
+   · H2 顶一条书眉线；分隔线是一枚菱形的「题花」；
+   · 表格是账簿：双线表头、竖发丝线、等宽数字；
+   · callout 不填色，只有左侧语义细线和等宽小标签，像页边注。
+   ============================================================================= */
+
+/* @settings
+name: Letterpress 铅印
+id: letterpress
+settings:
+  -
+    id: lp-type
+    title: 排版
+    type: heading
+    level: 2
+  -
+    id: lp-page-width
+    title: 行宽
+    description: 正文每行大约放多少汉字。
+    type: class-select
+    allowEmpty: false
+    default: lp-width-standard
+    options:
+      - label: 窄 · 约 30 字
+        value: lp-width-narrow
+        description: 一行 30 字上下
+      - label: 宽 · 约 42 字
+        value: lp-width-wide
+        description: 一行 42 字上下
+      - label: 标准 · 约 34 字
+        value: lp-width-standard
+        description: 一行 34 字上下（默认）
+  -
+    id: lp-paragraph-space
+    title: 段落改为段间留白
+    description: 仅阅读模式生效：取消段首缩进，改用段间距分隔。
+    type: class-toggle
+    default: false
+  -
+    id: lp-no-margin
+    title: 隐藏左侧版心线
+    description: 阅读视图里正文左侧那条竖线。
+    type: class-toggle
+    default: false
+  -
+    id: lp-no-grain
+    title: 关闭纸纹
+    description: 正文页那层很淡的噪点。
+    type: class-toggle
+    default: false
+  -
+    id: lp-ui
+    title: 界面
+    type: heading
+    level: 2
+  -
+    id: nav-item-size
+    title: 侧栏字号
+    description: 文件树、大纲、搜索结果共用的字号，默认 15。
+    type: variable-number
+    format: px
+    default: 15
+  -
+    id: lp-flat
+    title: 全直角
+    description: 把界面上仅剩的几个小圆角也削平。
+    type: class-toggle
+    default: false
+*/
+
+/* -----------------------------------------------------------------------------
+   01 · 色板
+   -------------------------------------------------------------------------- */
+
+/* 纸 —— 近中性、极浅的米灰。不是黄色旧纸，是刚印完的白样。 */
+.theme-light {
+  --color-base-00: #fbfbf8;
+  --color-base-05: #f8f8f4;
+  --color-base-10: #f4f4ef;
+  --color-base-20: #eeeee8;
+  --color-base-25: #e9e9e2;
+  --color-base-30: #deded5;
+  --color-base-35: #d3d3c9;
+  --color-base-40: #c2c2b7;
+  --color-base-50: #9a9a8f;
+  --color-base-60: #7d7d73;
+  --color-base-70: #63635a;
+  --color-base-80: #4e4e46;
+  --color-base-90: #36362f;
+  --color-base-100: #1f2019;
+
+  --lp-ink-blue: #2e4f66;
+  --lp-ink-blue-deep: #1e3a4d;
+  --lp-vermilion: #b03a2c;
+  --lp-vermilion-deep: #8d2b1f;
+
+  --lp-highlight: #e2c179;
+
+  --color-red-rgb: 176, 58, 44;
+  --color-orange-rgb: 160, 96, 45;
+  --color-yellow-rgb: 150, 116, 36;
+  --color-green-rgb: 70, 101, 73;
+  --color-cyan-rgb: 54, 90, 92;
+  --color-blue-rgb: 46, 79, 102;
+  --color-purple-rgb: 92, 74, 105;
+  --color-pink-rgb: 148, 74, 86;
+
+  --callout-default: 46, 79, 102;
+  --callout-note: 46, 79, 102;
+  --callout-info: 46, 79, 102;
+  --callout-todo: 46, 79, 102;
+  --callout-abstract: 54, 90, 92;
+  --callout-summary: 54, 90, 92;
+  --callout-tip: 70, 101, 73;
+  --callout-hint: 70, 101, 73;
+  --callout-success: 70, 101, 73;
+  --callout-check: 70, 101, 73;
+  --callout-question: 150, 111, 32;
+  --callout-help: 150, 111, 32;
+  --callout-faq: 150, 111, 32;
+  --callout-warning: 160, 96, 45;
+  --callout-caution: 160, 96, 45;
+  --callout-attention: 160, 96, 45;
+  --callout-failure: 176, 58, 44;
+  --callout-fail: 176, 58, 44;
+  --callout-danger: 176, 58, 44;
+  --callout-error: 176, 58, 44;
+  --callout-bug: 176, 58, 44;
+  --callout-missing: 176, 58, 44;
+  --callout-example: 92, 74, 105;
+  --callout-quote: 99, 101, 89;
+  --callout-cite: 99, 101, 89;
+  /* 本主题自定义类型 */
+  --callout-scene: 54, 90, 92;
+  --callout-author: 99, 101, 89;
+}
+
+/* 墨夜 —— 冷黑而非暖黑；纸色文字微微发暖，彩度更低。 */
+.theme-dark {
+  --color-base-00: #16171a;
+  --color-base-05: #191a1d;
+  --color-base-10: #1c1d21;
+  --color-base-20: #212227;
+  --color-base-25: #26272c;
+  --color-base-30: #2d2e34;
+  --color-base-35: #36373e;
+  --color-base-40: #45474f;
+  --color-base-50: #606269;
+  --color-base-60: #80828a;
+  --color-base-70: #a2a4ab;
+  --color-base-80: #c2c3c7;
+  --color-base-90: #dadbd5;
+  --color-base-100: #e9e8e0;
+
+  --lp-ink-blue: #8fb6cb;
+  --lp-ink-blue-deep: #b3d0df;
+  --lp-vermilion: #e0796a;
+  --lp-vermilion-deep: #ef9a8d;
+
+  --lp-highlight: #cfa95c;
+
+  --color-red-rgb: 224, 121, 106;
+  --color-orange-rgb: 214, 152, 104;
+  --color-yellow-rgb: 204, 176, 110;
+  --color-green-rgb: 138, 176, 138;
+  --color-cyan-rgb: 128, 172, 172;
+  --color-blue-rgb: 143, 182, 203;
+  --color-purple-rgb: 176, 158, 190;
+  --color-pink-rgb: 208, 146, 158;
+
+  --callout-default: 143, 182, 203;
+  --callout-note: 143, 182, 203;
+  --callout-info: 143, 182, 203;
+  --callout-todo: 143, 182, 203;
+  --callout-abstract: 128, 172, 172;
+  --callout-summary: 128, 172, 172;
+  --callout-tip: 138, 176, 138;
+  --callout-hint: 138, 176, 138;
+  --callout-success: 138, 176, 138;
+  --callout-check: 138, 176, 138;
+  --callout-question: 204, 176, 110;
+  --callout-help: 204, 176, 110;
+  --callout-faq: 204, 176, 110;
+  --callout-warning: 214, 152, 104;
+  --callout-caution: 214, 152, 104;
+  --callout-attention: 214, 152, 104;
+  --callout-failure: 224, 121, 106;
+  --callout-fail: 224, 121, 106;
+  --callout-danger: 224, 121, 106;
+  --callout-error: 224, 121, 106;
+  --callout-bug: 224, 121, 106;
+  --callout-missing: 224, 121, 106;
+  --callout-example: 176, 158, 190;
+  --callout-quote: 150, 152, 143;
+  --callout-cite: 150, 152, 143;
+  --callout-scene: 128, 172, 172;
+  --callout-author: 150, 152, 143;
+}
+
+/* 深色版的代码配色必须另配一遍：浅色的深紫 / 深绿在墨底上会糊成一团。 */
+body.theme-dark {
+  --code-function: #b49ad0;
+  --code-keyword: #8fb6cb;
+  --code-string: #9dbf9d;
+  --code-value: #9dbf9d;
+  --code-property: #d6b183;
+  --code-tag: #e0796a;
+  --code-important: #e0796a;
+  --accent-h: 202;
+  --accent-s: 40%;
+  --accent-l: 68%;
+}
+
+body.theme-light {
+  --code-function: #6a4a86;
+  --code-keyword: #2e4f66;
+  --code-property: #8a5a1f;
+  --code-string: #4a6b4d;
+  --code-value: #4a6b4d;
+  --code-tag: #8d2b1f;
+  --code-important: var(--lp-vermilion);
+  --accent-h: 202;
+  --accent-s: 39%;
+  --accent-l: 29%;
+}
+
+/* -----------------------------------------------------------------------------
+   02 · 语义变量：颜色、界面、版面
+   -------------------------------------------------------------------------- */
+
+body.theme-light,
+body.theme-dark {
+  /* —— 纸与墨 —— */
+  --lp-paper: var(--color-base-00);
+  --lp-paper-alt: var(--color-base-05);
+  --lp-paper-2: var(--color-base-10);
+  --lp-paper-3: var(--color-base-20);
+  --lp-ink: var(--color-base-100);
+  --lp-ink-soft: var(--color-base-80);
+  --lp-ink-mute: var(--color-base-70);
+  --lp-ink-faint: var(--color-base-50);
+  --lp-rule: var(--color-base-30);
+  --lp-rule-strong: var(--color-base-40);
+  --lp-rule-faint: color-mix(in srgb, var(--lp-ink) 9%, transparent);
+  --lp-tint: color-mix(in srgb, var(--lp-ink) 4%, transparent);
+  --lp-tint-strong: color-mix(in srgb, var(--lp-ink) 7%, transparent);
+
+  /* 纸纹：很轻的一层噪点，只铺在正文页上。 */
+  --lp-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.055'/%3E%3C/svg%3E");
+
+  /* —— 底色 —— */
+  --background-primary: var(--lp-paper);
+  --background-primary-alt: var(--lp-paper-alt);
+  --background-secondary: var(--lp-paper-2);
+  --background-secondary-alt: var(--lp-paper-3);
+  --background-modifier-border: var(--lp-rule);
+  --background-modifier-border-hover: color-mix(in srgb, var(--lp-rule-strong) 85%, transparent);
+  --background-modifier-border-focus: var(--lp-ink-blue);
+  --background-modifier-hover: var(--lp-tint);
+  --background-modifier-active-hover: var(--lp-tint-strong);
+  --background-modifier-form-field: var(--color-base-05);
+  --background-modifier-form-field-highlighted: var(--lp-paper);
+  --background-modifier-box-shadow: hsl(220 12% 8% / 0.10);
+  --background-modifier-success: color-mix(in srgb, var(--color-green) 18%, transparent);
+  --background-modifier-error: color-mix(in srgb, var(--lp-vermilion) 16%, transparent);
+  --background-modifier-error-hover: color-mix(in srgb, var(--lp-vermilion) 24%, transparent);
+  --background-modifier-cover: hsl(220 14% 6% / 0.42);
+  --background-modifier-message: var(--lp-paper);
+
+  /* —— 文字 —— */
+  --text-normal: var(--lp-ink);
+  --text-muted: var(--lp-ink-mute);
+  --text-faint: var(--lp-ink-faint);
+  --text-on-accent: var(--color-base-00);
+  --text-on-accent-inverted: var(--lp-ink);
+  --text-accent: var(--lp-ink-blue);
+  --text-accent-hover: var(--lp-ink-blue-deep);
+  --text-selection: color-mix(in srgb, var(--lp-ink-blue) 18%, transparent);
+  --text-highlight-bg: color-mix(in srgb, var(--lp-highlight) 46%, transparent);
+  --text-highlight-bg-active: color-mix(in srgb, var(--lp-highlight) 70%, transparent);
+  --text-error: var(--lp-vermilion);
+  --text-success: var(--color-green);
+  --text-warning: var(--color-orange);
+
+  /* —— 交互 —— */
+  --interactive-normal: var(--color-base-05);
+  --interactive-hover: var(--color-base-10);
+  --interactive-accent: var(--lp-ink-blue);
+  --interactive-accent-hover: var(--lp-ink-blue-deep);
+  --interactive-success: var(--color-green);
+  --interactive-accent-rgb: 46, 79, 102;
+  --color-accent: var(--lp-ink-blue);
+  --color-accent-1: var(--lp-ink-blue-deep);
+  --color-accent-2: color-mix(in srgb, var(--lp-ink-blue) 70%, var(--lp-ink));
+
+  /* —— 引用（reading view 与编辑器共用这套 token） —— */
+  --blockquote-border-thickness: 2px;
+  --blockquote-border-color: var(--lp-vermilion);
+  --blockquote-background-color: transparent;
+  --blockquote-font-style: normal;
+  --blockquote-color: var(--lp-ink-soft);
+
+  /* —— 分隔与滚动 —— */
+  --divider-color: var(--lp-rule);
+  --divider-color-hover: var(--lp-rule-strong);
+  --scrollbar-bg: transparent;
+  --scrollbar-thumb-bg: color-mix(in srgb, var(--lp-ink) 16%, transparent);
+  --scrollbar-active-thumb-bg: color-mix(in srgb, var(--lp-ink) 30%, transparent);
+
+  /* —— 图标 —— */
+  --icon-color: var(--lp-ink-mute);
+  --icon-color-hover: var(--lp-ink);
+  --icon-color-active: var(--lp-vermilion);
+  --icon-color-focused: var(--lp-ink);
+  --icon-opacity: 0.9;
+  --icon-opacity-hover: 1;
+  --collapse-icon-color: var(--lp-ink-faint);
+  --collapse-icon-color-collapsed: var(--lp-ink-mute);
+
+  /* —— 圆角与阴影：几乎全直角 —— */
+  --radius-s: 2px;
+  --radius-m: 3px;
+  --radius-l: 4px;
+  --radius-xl: 6px;
+  --clickable-icon-radius: 2px;
+  --shadow-s: 0 0 0 1px var(--lp-rule-faint), 0 8px 24px hsl(220 12% 8% / 0.08);
+  --shadow-l: 0 0 0 1px var(--lp-rule-faint), 0 18px 56px hsl(220 12% 8% / 0.16);
+
+  /* —— 标签页 / 标题栏 / 侧栏 —— */
+  --titlebar-background: var(--lp-paper-2);
+  --titlebar-background-focused: var(--lp-paper-2);
+  --titlebar-text-color: var(--lp-ink-mute);
+  --titlebar-text-color-focused: var(--lp-ink);
+  --ribbon-background: var(--lp-paper-2);
+  --ribbon-background-collapsed: var(--lp-paper-2);
+  --tab-container-background: var(--lp-paper-2);
+  --tab-background-active: var(--lp-paper);
+  --tab-text-color: var(--lp-ink-faint);
+  --tab-text-color-active: var(--lp-ink);
+  --tab-text-color-focused: var(--lp-ink-mute);
+  --tab-text-color-focused-active: var(--lp-ink);
+  --tab-text-color-focused-active-current: var(--lp-ink);
+  --tab-outline-width: 0px;
+  --tab-outline-color: transparent;
+  --tab-divider-color: var(--lp-rule);
+  --tab-radius: 2px;
+  --status-bar-background: var(--lp-paper-2);
+  --status-bar-border-color: var(--lp-rule);
+  --status-bar-text-color: var(--lp-ink-faint);
+
+  /* —— 文件树 —— */
+  --nav-item-color: var(--lp-ink-mute);
+  --nav-item-color-hover: var(--lp-ink);
+  --nav-item-color-active: var(--lp-ink);
+  --nav-item-color-selected: var(--lp-ink);
+  --nav-item-background-hover: var(--lp-tint);
+  --nav-item-background-active: color-mix(in srgb, var(--lp-ink-blue) 9%, transparent);
+  --nav-item-background-selected: color-mix(in srgb, var(--lp-ink-blue) 14%, transparent);
+  --nav-item-size: 15px;
+  --nav-item-radius: 2px;
+  --nav-indentation-guide-width: 0px;
+  --nav-indentation-guide-color: transparent;
+  --nav-indentation-guide-color-active: var(--lp-rule-strong);
+
+  /* —— 链接与标签 —— */
+  --link-color: var(--lp-ink-blue);
+  --link-color-hover: var(--lp-ink-blue-deep);
+  --link-external-color: var(--lp-ink-blue);
+  --link-external-color-hover: var(--lp-ink-blue-deep);
+  --link-decoration: none;
+  --link-decoration-hover: none;
+  --link-external-decoration: none;
+  --link-external-decoration-hover: none;
+  --link-unresolved-color: var(--lp-ink-faint);
+  --link-unresolved-opacity: 1;
+
+  --tag-color: var(--lp-ink-blue);
+  --tag-color-hover: var(--lp-ink-blue-deep);
+  --tag-background: transparent;
+  --tag-background-hover: color-mix(in srgb, var(--lp-ink-blue) 10%, transparent);
+  --tag-border-color: color-mix(in srgb, var(--lp-ink-blue) 34%, transparent);
+  --tag-border-color-hover: var(--lp-ink-blue);
+  --tag-border-width: 1px;
+  --tag-padding-x: 0.42em;
+  --tag-padding-y: 0.06em;
+  --tag-radius: 2px;
+
+  /* —— 复选框 —— */
+  --checkbox-size: 0.92em;
+  --checkbox-radius: 1px;
+  --checkbox-border-color: var(--lp-rule-strong);
+  --checkbox-border-color-hover: var(--lp-ink-mute);
+  --checkbox-color: var(--lp-vermilion);
+  --checkbox-color-hover: var(--lp-vermilion-deep);
+  --checkbox-marker-color: var(--lp-paper);
+
+  /* —— 代码 —— */
+  --code-size: 0.86em;
+  --code-radius: 2px;
+  --code-border-width: 1px;
+  --code-border-color: var(--lp-rule-faint);
+  --code-background: color-mix(in srgb, var(--lp-ink) 3.5%, transparent);
+  --code-normal: var(--lp-ink-soft);
+  --code-comment: var(--lp-ink-faint);
+  --code-punctuation: var(--lp-ink-faint);
+
+  /* —— 表格 —— */
+  --table-border-color: var(--lp-rule);
+  --table-header-background: transparent;
+  --table-header-weight: 600;
+  --table-row-background-hover: var(--lp-tint);
+  --table-column-first-border-width: 0px;
+  --table-column-last-border-width: 0px;
+
+  /* —— 行内元素 / 嵌入 / 图片 —— */
+  --embed-background: transparent;
+  --embed-border-start: 2px solid var(--lp-rule-strong);
+  --embed-border-color: var(--lp-rule-strong);
+  --embed-padding: 0.4em 0 0.4em 1.1em;
+  --embed-radius: 0px;
+  --embed-max-height: none;
+  --image-radius: 1px;
+
+  /* —— 分隔线 —— */
+  --hr-color: var(--lp-rule);
+  --hr-thickness: 1px;
+  --hr-width: 100%;
+  --hr-align: center;
+
+  /* —— callout：页边注 —— */
+  --callout-blend-mode: normal;
+  --callout-border-width: 2px;
+  --callout-border-opacity: 1;
+  --callout-padding: 0.35em 0 0.45em 1.15em;
+  --callout-radius: 0px;
+  --callout-size: 1em;
+  --callout-title-color: inherit;
+  --callout-content-background: transparent;
+
+  /* —— 图谱 —— */
+  --graph-node: var(--lp-ink-mute);
+  --graph-node-focused: var(--lp-vermilion);
+  --graph-node-tag: var(--lp-ink-blue);
+  --graph-node-attachment: var(--lp-ink-faint);
+  --graph-node-unresolved: var(--lp-rule-strong);
+  --graph-line: var(--lp-rule);
+  --graph-line-highlight: var(--lp-ink-blue);
+  --graph-text: var(--lp-ink-mute);
+
+  /* —— 字体层级：一律 em，跟随你设定的正文字号缩放 —— */
+  --h1-size: 1.72em;
+  --h2-size: 1.3em;
+  --h3-size: 1.1em;
+  --h4-size: 1em;
+  --h5-size: 0.94em;
+  --h6-size: 0.88em;
+  --h1-weight: 600;
+  --h2-weight: 600;
+  --h3-weight: 600;
+  --h4-weight: 600;
+  --h5-weight: 500;
+  --h6-weight: 500;
+  --h1-color: var(--lp-ink);
+  --h2-color: var(--lp-ink);
+  --h3-color: var(--lp-ink);
+  --h4-color: var(--lp-ink-soft);
+  --h5-color: var(--lp-ink-mute);
+  --h6-color: var(--lp-ink-faint);
+  --h1-line-height: 1.35;
+  --h2-line-height: 1.4;
+  --h3-line-height: 1.45;
+  --h4-line-height: 1.5;
+  --h5-line-height: 1.5;
+  --h6-line-height: 1.5;
+
+  --inline-title-size: 1.55em;
+  --inline-title-weight: 600;
+  --inline-title-color: var(--lp-ink);
+  --inline-title-line-height: 1.35;
+  --inline-title-margin-bottom: 1.1em;
+
+  /* —— 版面 —— */
+  --lp-measure: 34em;
+  --file-line-width: var(--lp-measure);
+  --file-margins: 3.2rem 2.4rem 6rem;
+  --file-margins-x: 2.4rem;
+  --file-margins-y: 3.2rem;
+  --line-height-normal: 1.8;
+  --line-height-tight: 1.35;
+  --line-height-relaxed: 2;
+  --p-spacing: 0.32em;
+  --p-spacing-empty: 0.9em;
+  --heading-spacing: 1.9em;
+  --list-spacing: 0.18em;
+  --list-indent: 2em;
+  --indentation-guide-color: var(--lp-rule);
+  --indentation-guide-color-active: var(--lp-rule-strong);
+  --indentation-guide-width: 1px;
+
+  /* —— 移动端 —— */
+  --mobile-sidebar-width: 88vw;
+}
+
+/* -----------------------------------------------------------------------------
+   03 · 正文：标题、段落、清单、表格、引用、题花
+   -------------------------------------------------------------------------- */
+
+/* 纸纹：只铺在正文层，不干扰界面。 */
+.markdown-reading-view .markdown-preview-view,
+.markdown-source-view.mod-cm6 .cm-scroller {
+  background-color: var(--background-primary);
+  background-image: var(--lp-grain);
+  background-blend-mode: multiply;
+}
+
+/* —— 题名（inline title）：一条朱红短线压在上面，下面一根发丝线 —— */
+.inline-title {
+  position: relative;
+  letter-spacing: 0.02em;
+  padding-block: 1.1em 0.5em;
+  border-bottom: 1px solid var(--lp-rule);
+  margin-block-end: var(--inline-title-margin-bottom);
+}
+
+.inline-title::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0.2em;
+  inset-inline-start: 0;
+  width: 2.2rem;
+  height: 2px;
+  background: var(--lp-vermilion);
+}
+
+/* —— H1：书刊式标题，双线收底 —— */
+.markdown-rendered h1:not(.inline-title) {
+  border-bottom: 3px double var(--lp-rule-strong);
+  padding-bottom: 0.32em;
+  margin-block: 2.3em 1.2em;
+  letter-spacing: 0.02em;
+}
+
+.markdown-rendered h1:not(.inline-title):first-child {
+  margin-block-start: 0.4em;
+}
+
+/* —— H2：书眉线 + 页边章节号 —— */
+.markdown-rendered h2 {
+  border-bottom: 1px solid var(--lp-rule);
+  padding-bottom: 0.42em;
+  margin-block: 2.4em 1.15em;
+  letter-spacing: 0.02em;
+}
+
+.markdown-rendered h1 + h2,
+.markdown-rendered h2:first-child {
+  margin-block-start: 1.5em;
+}
+
+
+/* H2 的页边标记：一根朱红短竖线。
+   这里刻意不用 CSS 计数器——Obsidian 的阅读视图按段挂载/卸载，
+   长文里 ::before 的编号会从中间重新数起，宁可不编号。 */
+.markdown-rendered h2::before {
+  content: "";
+  display: inline-block;
+  inline-size: 0.32em;
+  block-size: 0.32em;
+  background: var(--lp-vermilion);
+  margin-inline-end: 0.55em;
+  vertical-align: 0.12em;
+}
+
+/* —— H3：一枚菱形 —— */
+.markdown-rendered h3::before {
+  content: "";
+  display: inline-block;
+  width: 0.34em;
+  height: 0.34em;
+  background: var(--lp-vermilion);
+  transform: rotate(45deg);
+  margin-inline-end: 0.5em;
+  vertical-align: 0.18em;
+}
+
+.markdown-rendered h4 {
+  letter-spacing: 0.05em;
+}
+
+.markdown-rendered h5 {
+  letter-spacing: 0.1em;
+}
+
+.markdown-rendered h6 {
+  letter-spacing: 0.16em;
+}
+
+/* —— 版心线：窗口够宽时，在正文左侧拉一条竖线，章节号排在线的外侧 —— */
+@media (min-width: 1200px) {
+  .markdown-reading-view .markdown-preview-sizer {
+    position: relative;
+  }
+
+  .markdown-reading-view .markdown-preview-sizer::before {
+    content: "";
+    position: absolute;
+    inset-block: 0.4rem 2rem;
+    inset-inline-start: -2.1rem;
+    width: 1px;
+    background: color-mix(in srgb, var(--lp-ink) 14%, transparent);
+    pointer-events: none;
+  }
+
+  .markdown-reading-view .markdown-rendered h2 {
+    position: relative;
+  }
+
+  .markdown-reading-view .markdown-rendered h2::before {
+    position: absolute;
+    inset-inline-start: -3.2rem;
+    inset-block-start: 0.9em;
+    inline-size: 7px;
+    block-size: 7px;
+    margin-inline-end: 0;
+    vertical-align: baseline;
+  }
+}
+
+/* —— 段落：首行缩进 + 两端对齐 —— */
+.markdown-rendered p {
+  text-indent: 2em;
+  margin-block: var(--p-spacing);
+  text-align: justify;
+  text-justify: inter-ideograph;
+}
+
+.markdown-rendered li p,
+.markdown-rendered blockquote p,
+.markdown-rendered td p,
+.markdown-rendered th p,
+.markdown-rendered .callout p,
+.markdown-rendered .markdown-embed p,
+.markdown-rendered figcaption,
+.markdown-rendered .math-block p {
+  text-indent: 0;
+  text-align: start;
+}
+
+/* 段间留白模式：关掉缩进，拉开间距（用 Style Settings 切换） */
+body.lp-paragraph-space {
+  --p-spacing: 1.05em;
+}
+
+body.lp-paragraph-space .markdown-rendered p {
+  text-indent: 0;
+}
+
+/* —— 列表 —— */
+.markdown-rendered ul,
+.markdown-rendered ol {
+  padding-inline-start: 1.55em;
+  margin-block: 0.7em;
+}
+
+.markdown-rendered li {
+  margin-block: var(--list-spacing);
+}
+
+.markdown-rendered ul > li::marker {
+  color: var(--lp-ink-mute);
+}
+
+.markdown-rendered ol > li::marker {
+  color: var(--lp-ink-faint);
+  font-size: 0.9em;
+  font-variant-numeric: tabular-nums;
+}
+
+.markdown-source-view .list-bullet::after {
+  background-color: var(--lp-ink-mute);
+}
+
+/* —— 复选框：朱红方印，勾是纸色 —— */
+.markdown-rendered .task-list-item-checkbox,
+.markdown-reading-view input[type="checkbox"],
+.markdown-source-view.mod-cm6 .task-list-item-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  inline-size: var(--checkbox-size);
+  block-size: var(--checkbox-size);
+  border: 1px solid var(--checkbox-border-color);
+  border-radius: var(--checkbox-radius);
+  background-color: transparent;
+  position: relative;
+  top: 0.08em;
+  margin-inline-end: 0.45em;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.markdown-rendered .task-list-item-checkbox:hover,
+.markdown-reading-view input[type="checkbox"]:hover {
+  border-color: var(--lp-ink-mute);
+}
+
+.theme-light .markdown-rendered .task-list-item-checkbox:checked,
+.theme-light .markdown-reading-view input[type="checkbox"]:checked,
+.theme-light .markdown-source-view.mod-cm6 .task-list-item-checkbox:checked {
+  background-color: var(--lp-vermilion);
+  border-color: var(--lp-vermilion);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.2 8.4 L6.5 11.6 L12.8 4.6' fill='none' stroke='%23fbfbf8' stroke-width='1.9' stroke-linecap='square'/%3E%3C/svg%3E");
+  background-size: 92% 92%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.theme-dark .markdown-rendered .task-list-item-checkbox:checked,
+.theme-dark .markdown-reading-view input[type="checkbox"]:checked,
+.theme-dark .markdown-source-view.mod-cm6 .task-list-item-checkbox:checked {
+  background-color: var(--lp-vermilion);
+  border-color: var(--lp-vermilion);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.2 8.4 L6.5 11.6 L12.8 4.6' fill='none' stroke='%2316171a' stroke-width='1.9' stroke-linecap='square'/%3E%3C/svg%3E");
+  background-size: 92% 92%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.markdown-rendered li[data-task="x"] > .cm-underline,
+.markdown-rendered li.task-list-item[data-task="x"],
+.markdown-rendered li:has(> input[type="checkbox"]:checked) {
+  color: var(--lp-ink-faint);
+}
+
+.markdown-rendered li.task-list-item[data-task="x"] .task-list-item-checkbox {
+  opacity: 0.85;
+}
+
+/* —— 引用：朱红侧线 + 挂角引号 —— */
+.markdown-rendered blockquote {
+  position: relative;
+  border-inline-start: 2px solid var(--lp-vermilion);
+  background: transparent;
+  margin-inline: 0;
+  padding: 0.1em 0 0.1em 1.9em;
+  color: var(--lp-ink-soft);
+}
+
+.markdown-rendered blockquote p {
+  text-indent: 0;
+}
+
+.markdown-rendered blockquote::before {
+  content: "「";
+  position: absolute;
+  inset-block-start: -0.18em;
+  inset-inline-start: 0.02em;
+  font-size: 2.05em;
+  line-height: 1;
+  color: color-mix(in srgb, var(--lp-vermilion) 34%, transparent);
+  pointer-events: none;
+}
+
+.markdown-rendered blockquote blockquote {
+  border-inline-start-color: var(--lp-rule-strong);
+}
+
+.markdown-rendered blockquote blockquote::before {
+  content: none;
+}
+
+/* —— 分隔线：一根本色发丝线，正中压一枚菱形题花 ——
+   用背景层画，不依赖绝对定位：第一层是菱形（纸色填充盖住线），第二层才是线。 */
+.markdown-rendered hr {
+  border: none;
+  block-size: 1.15em;
+  margin-block: 1.9em;
+  background-repeat: no-repeat, no-repeat;
+  background-size: 12px 12px, 100% 1px;
+  background-position: center, center;
+}
+
+.theme-light .markdown-rendered hr {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Crect x='3.4' y='3.4' width='5.2' height='5.2' transform='rotate(45 6 6)' fill='%23fbfbf8' stroke='%23b03a2c' stroke-width='1'/%3E%3C/svg%3E"), linear-gradient(var(--lp-rule), var(--lp-rule));
+}
+
+.theme-dark .markdown-rendered hr {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Crect x='3.4' y='3.4' width='5.2' height='5.2' transform='rotate(45 6 6)' fill='%2316171a' stroke='%23e0796a' stroke-width='1'/%3E%3C/svg%3E"), linear-gradient(var(--lp-rule), var(--lp-rule));
+}
+
+.markdown-rendered hr::before,
+.markdown-rendered hr::after,
+.cm-hr::before,
+.cm-hr::after {
+  content: none;
+}
+/* —— 行内代码与代码块 —— */
+.markdown-rendered :not(pre) > code {
+  font-size: 0.86em;
+  padding: 0.1em 0.3em;
+  border: 1px solid var(--lp-rule-faint);
+  border-radius: 1px;
+  background: color-mix(in srgb, var(--lp-ink) 3.5%, transparent);
+  color: var(--lp-ink-soft);
+}
+
+.markdown-rendered pre {
+  border: 1px solid var(--lp-rule);
+  border-radius: 2px;
+  background: var(--color-base-05);
+  padding: 0.9em 1.05em;
+  font-size: 0.84em;
+  line-height: 1.7;
+  margin-block: 1.2em;
+}
+
+.markdown-rendered pre code {
+  font-size: 1em;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.markdown-rendered .copy-code-button {
+  font-size: 0.7em;
+  letter-spacing: 0.08em;
+  border: 1px solid var(--lp-rule);
+  border-radius: 1px;
+  background: var(--lp-paper);
+  color: var(--lp-ink-faint);
+  padding: 0.25em 0.5em;
+}
+
+.markdown-rendered .copy-code-button:hover {
+  color: var(--lp-ink);
+  border-color: var(--lp-rule-strong);
+}
+
+/* —— 表格：账簿。双线表头、竖发丝线、注释体数字 —— */
+.markdown-rendered table {
+  border-collapse: collapse;
+  border: none;
+  font-size: 0.94em;
+  margin-block: 1.3em;
+}
+
+.markdown-rendered th {
+  border: none;
+  border-bottom: 3px double var(--lp-rule-strong);
+  background: transparent;
+  text-align: start;
+  padding: 0.5em 0.75em;
+  font-weight: 600;
+  color: var(--lp-ink);
+  vertical-align: bottom;
+}
+
+.markdown-rendered td {
+  border: none;
+  border-bottom: 1px solid var(--lp-rule);
+  padding: 0.45em 0.75em;
+  vertical-align: top;
+  font-variant-numeric: tabular-nums;
+}
+
+.markdown-rendered th + th,
+.markdown-rendered td + td {
+  border-inline-start: 1px solid color-mix(in srgb, var(--lp-rule) 62%, transparent);
+}
+
+.markdown-rendered tbody tr:last-child td {
+  border-bottom-color: var(--lp-rule-strong);
+}
+
+.markdown-rendered tbody tr:hover td {
+  background: var(--lp-tint);
+}
+
+/* —— 链接：内链安静（墨色 + 点线），外链露出来 —— */
+.markdown-rendered a {
+  text-decoration-line: underline;
+  text-decoration-style: dotted;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  text-decoration-color: color-mix(in srgb, var(--lp-ink-blue) 42%, transparent);
+}
+
+.markdown-rendered a:hover {
+  text-decoration-style: solid;
+  text-decoration-color: var(--lp-ink-blue);
+}
+
+.markdown-rendered a.internal-link {
+  color: var(--lp-ink);
+}
+
+.markdown-rendered a.internal-link:hover {
+  color: var(--lp-ink-blue);
+}
+
+.markdown-rendered a.external-link {
+  color: var(--lp-ink-blue);
+}
+
+.markdown-rendered a.external-link::after {
+  content: "↗";
+  font-size: 0.72em;
+  line-height: 1;
+  vertical-align: 0.32em;
+  margin-inline-start: 0.12em;
+  color: var(--lp-ink-blue);
+}
+
+.markdown-rendered a.is-unresolved {
+  color: var(--lp-ink-faint);
+  text-decoration-style: dashed;
+}
+
+.markdown-source-view .cm-hmd-internal-link .cm-underline {
+  text-decoration-line: underline;
+  text-decoration-style: dotted;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  text-decoration-color: color-mix(in srgb, var(--lp-ink-blue) 40%, transparent);
+}
+
+/* —— 标签 —— */
+.tag,
+.markdown-rendered a.tag {
+  font-size: 0.76em;
+  letter-spacing: 0.04em;
+  border: 1px solid var(--tag-border-color);
+  border-radius: 1px;
+  padding: 0.06em 0.42em;
+  background: transparent;
+  color: var(--lp-ink-blue);
+  text-decoration: none;
+}
+
+.tag:hover {
+  background: var(--tag-background-hover);
+  border-color: var(--tag-border-color-hover);
+  color: var(--lp-ink-blue-deep);
+}
+
+.cm-hashtag {
+  color: var(--lp-ink-blue);
+  font-size: 0.94em;
+}
+
+/* —— 划线与高亮：荧光笔压在下三分之一 —— */
+.markdown-rendered mark,
+.markdown-source-view.mod-cm6 .cm-highlight,
+.markdown-source-view.mod-cm6 .cm-formatting-highlight,
+.cm-highlight {
+  background-color: transparent;
+  background-image: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--lp-highlight) 55%, transparent) 0 40%,
+    transparent 40%
+  );
+  color: inherit;
+  padding: 0 0.05em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.markdown-rendered u {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  text-decoration-color: var(--lp-vermilion);
+}
+
+/* —— 脚注 —— */
+/* 脚注：Obsidian 自己会在 .footnotes 里插入一条 <hr> 当分隔线，
+   所以不要在这里再画 border-top，否则会出现两条线。 */
+.markdown-rendered .footnotes {
+  margin-block-start: 3em;
+  padding-top: 0;
+  font-size: 0.84em;
+  color: var(--lp-ink-mute);
+}
+
+.markdown-rendered .footnotes hr,
+.markdown-rendered hr.footnote-separator {
+  border: none;
+  block-size: 1px;
+  inline-size: 3.6em;
+  margin: 0 0 1.1em;
+  background: var(--lp-rule-strong);
+  background-image: none;
+}
+
+.markdown-rendered .footnotes ol {
+  padding-inline-start: 1.2em;
+}
+
+.markdown-rendered a.footnote-link,
+.markdown-rendered .footnote-ref {
+  color: var(--lp-vermilion);
+  text-decoration: none;
+  font-size: 0.82em;
+  vertical-align: 0.2em;
+}
+
+/* —— 图片与嵌入 —— */
+.markdown-rendered img {
+  border: 1px solid var(--lp-rule);
+  border-radius: 1px;
+}
+
+.markdown-rendered .image-embed img:hover {
+  border-color: var(--lp-rule-strong);
+}
+
+.markdown-rendered .internal-embed.markdown-embed {
+  border-inline-start: 2px solid var(--lp-rule-strong);
+  background: transparent;
+  border-radius: 0;
+}
+
+.markdown-rendered .markdown-embed-title,
+.markdown-rendered .markdown-embed-title-inner {
+  font-size: 0.78em;
+  letter-spacing: 0.08em;
+  color: var(--lp-ink-faint);
+  font-weight: 500;
+}
+
+/* —— 属性区（frontmatter）：像表单，不像卡片 —— */
+/* 用 Obsidian 自带的 --metadata-* token 控制，别去改里面的 input，
+   那会连属性名的输入框一起框起来（就是这里踩过的坑）。 */
+.metadata-container {
+  --metadata-padding: 0;
+  --metadata-gap: 0;
+  --metadata-divider-width: 0;
+  --metadata-property-padding: 4px 0;
+  --metadata-property-radius: 0;
+  --metadata-property-background: transparent;
+  --metadata-label-width: 172px;
+  --metadata-label-font-size: 11px;
+  --metadata-input-font-size: 13px;
+  --metadata-input-height: 26px;
+  --metadata-label-background: transparent;
+  --metadata-label-background-hover: transparent;
+  --metadata-input-background: transparent;
+  --metadata-input-background-hover: transparent;
+  border-bottom: 1px solid var(--lp-rule);
+  margin-block-end: 1.8em;
+  padding-block-end: 0.5em;
+}
+
+.metadata-properties-heading {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--lp-ink-faint);
+}
+
+.metadata-property {
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.metadata-property:not(:last-child) {
+  border-bottom: 1px solid color-mix(in srgb, var(--lp-rule) 60%, transparent);
+}
+
+.metadata-property:hover,
+.metadata-property:focus-within {
+  background: transparent;
+  box-shadow: none;
+}
+
+/* 属性里的输入控件要像文字，不像砖头。
+   必须压过下面 04 节的全局 input 规则，所以带上 .metadata-container 前缀。 */
+.metadata-container input.metadata-property-key-input,
+.metadata-container .metadata-input-text,
+.metadata-container .metadata-input-number,
+.metadata-container .metadata-input-longtext {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  padding-inline: 0;
+  font-size: var(--metadata-input-font-size);
+  color: var(--lp-ink-soft);
+}
+
+/* 键名单独再小一号、再淡一点：和前面那个小图标同一个量级 */
+.metadata-container input.metadata-property-key-input {
+  font-size: var(--metadata-label-font-size);
+  color: var(--lp-ink-faint);
+}
+
+.metadata-property-key {
+  color: var(--lp-ink-faint);
+  letter-spacing: 0.06em;
+  gap: 9px;
+}
+
+.metadata-property-icon {
+  color: var(--lp-ink-faint);
+  opacity: 0.75;
+}
+
+.metadata-property-value {
+  color: var(--lp-ink-soft);
+}
+
+.metadata-add-button {
+  color: var(--lp-ink-faint);
+  font-size: 12px;
+}
+
+/* 多值：去掉胶囊，用顿号分开，像一行字而不是一排标签 */
+.metadata-property .multi-select-container {
+  gap: 0;
+}
+
+.metadata-property .multi-select-pill {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  margin: 0;
+  color: var(--lp-ink-soft);
+}
+
+.metadata-property .multi-select-pill:hover {
+  background: transparent;
+  color: var(--lp-ink);
+}
+
+.metadata-property .multi-select-pill + .multi-select-pill::before {
+  content: "、";
+  color: var(--lp-ink-faint);
+}
+
+.metadata-property .multi-select-pill-remove-button {
+  opacity: 0.25;
+}
+
+/* -----------------------------------------------------------------------------
+   04 · 界面：框架、标签页、菜单、命令面板
+   -------------------------------------------------------------------------- */
+
+::selection {
+  background: var(--text-selection);
+}
+
+:focus-visible {
+  outline: 1.5px solid var(--lp-ink-blue);
+  outline-offset: 2px;
+}
+
+/* —— 窗口框架 —— */
+.app-container {
+  background: var(--background-secondary);
+}
+
+.titlebar {
+  background: var(--lp-paper-2);
+  border-bottom: 1px solid var(--lp-rule-faint);
+}
+
+.titlebar-inner {
+  color: var(--lp-ink-faint);
+}
+
+.titlebar-button {
+  border-radius: 1px;
+}
+
+.titlebar-button:hover {
+  background: var(--lp-tint);
+  color: var(--lp-ink);
+}
+
+html.is-hidden-frameless .titlebar {
+  border-bottom: 1px solid var(--lp-rule-faint);
+}
+
+.workspace-leaf-resize-handle {
+  background: transparent;
+  border-color: transparent;
+}
+
+.workspace-leaf-resize-handle:hover {
+  background: color-mix(in srgb, var(--lp-ink-blue) 35%, transparent);
+}
+
+/* —— 左侧功能区 —— */
+.workspace-ribbon {
+  background: var(--lp-paper-2);
+  border-inline-end: 1px solid var(--lp-rule);
+  padding-block: 0.35em;
+}
+
+.workspace-ribbon.mod-left.is-collapsed {
+  border-inline-end-color: transparent;
+}
+
+.side-dock-ribbon-action,
+.workspace-ribbon .clickable-icon {
+  color: var(--lp-ink-faint);
+  border-radius: 1px;
+}
+
+.side-dock-ribbon-action:hover,
+.workspace-ribbon .clickable-icon:hover {
+  color: var(--lp-ink);
+  background: var(--lp-tint);
+}
+
+.side-dock-ribbon-action.is-active {
+  color: var(--lp-vermilion);
+}
+
+/* —— 标签页：选中页顶一道朱线 —— */
+.workspace-tab-header-container {
+  background: var(--lp-paper-2);
+  border-bottom: 1px solid var(--lp-rule-faint);
+}
+
+.workspace-tab-header {
+  position: relative;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.workspace-tab-header-inner {
+  padding: 0.3em 0.7em;
+}
+
+.workspace-tab-header-inner-title {
+  font-size: 0.8em;
+  letter-spacing: 0.04em;
+  color: var(--lp-ink-faint);
+}
+
+.workspace-tab-header.is-active {
+  background: var(--lp-paper);
+}
+
+.workspace-tab-header.is-active::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0.3em;
+  block-size: 2px;
+  background: var(--lp-vermilion);
+  pointer-events: none;
+}
+
+.workspace-tab-header.is-active .workspace-tab-header-inner-title {
+  color: var(--lp-ink);
+}
+
+.workspace-tab-header-tab-list,
+.workspace-tab-header-new-tab {
+  border-radius: 1px;
+}
+
+/* —— 文件头 —— */
+.view-header {
+  background: var(--background-primary);
+  border-bottom: 1px solid transparent;
+  padding-inline: 0.9em;
+}
+
+.view-header-title {
+  font-size: 0.8em;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: var(--lp-ink-faint);
+}
+
+.view-header-breadcrumb {
+  font-size: 0.8em;
+  color: var(--lp-ink-faint);
+}
+
+.view-header-nav-buttons .clickable-icon:hover {
+  color: var(--lp-ink);
+}
+
+/* —— 文件树与侧栏列表 —— */
+.nav-buttons-container {
+  border-bottom: 1px solid var(--lp-rule-faint);
+  padding-block: 0.3em;
+}
+
+.nav-header,
+.workspace-leaf-content[data-type="outline"] .view-header {
+  border-bottom: none;
+}
+
+.nav-file-title,
+.nav-folder-title,
+.tree-item-self {
+  border-radius: 1px;
+}
+
+.nav-file-title:hover,
+.nav-folder-title:hover,
+.tree-item-self:hover {
+  color: var(--lp-ink);
+}
+
+.nav-file-title.is-active,
+.nav-folder-title.is-active,
+.tree-item-self.is-active {
+  background: var(--lp-tint-strong);
+  box-shadow: inset 2px 0 0 var(--lp-vermilion);
+  color: var(--lp-ink);
+}
+
+.nav-file-title.is-active .nav-file-tag {
+  color: var(--lp-ink-faint);
+}
+
+.nav-file-tag {
+  font-size: 0.7em;
+  letter-spacing: 0.06em;
+  color: var(--lp-ink-faint);
+}
+
+.collapse-icon {
+  color: var(--lp-ink-faint);
+}
+/* 层级线改由 ::before 画，并整体往左退 6px：
+   你的行里有 icon-folder 注入的图标和字数插件的第二行，
+   核心那条贴边的 border 会正好压在折叠箭头上。 */
+.nav-files-container .tree-item-children {
+  position: relative;
+  border-inline-start: none;
+}
+
+.nav-files-container .tree-item-children::before {
+  content: "";
+  position: absolute;
+  inset-block: 3px;
+  inset-inline-start: -6px;
+  width: 1px;
+  background: color-mix(in srgb, var(--lp-ink) 11%, transparent);
+  pointer-events: none;
+}
+
+/* —— 状态栏：一行小字，像版权页的版权行 —— */
+.status-bar {
+  background: var(--lp-paper-2);
+  border-top: 1px solid var(--lp-rule);
+  padding-inline: 0.7em;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--lp-ink-faint);
+}
+
+.status-bar-item {
+  color: var(--lp-ink-faint);
+}
+
+.status-bar-item:hover {
+  color: var(--lp-ink);
+}
+
+.status-bar-item.mod-clickable:hover {
+  background: var(--lp-tint);
+}
+
+/* —— 滚动条 —— */
+::-webkit-scrollbar {
+  width: 11px;
+  height: 11px;
+  background: transparent;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--lp-ink) 15%, transparent);
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--lp-ink) 28%, transparent);
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+
+/* —— 输入框与按钮 —— */
+input[type="text"],
+input[type="search"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+textarea,
+select {
+  border: 1px solid var(--lp-rule);
+  border-radius: 2px;
+  background: var(--color-base-05);
+  color: var(--lp-ink);
+  font-size: 0.9em;
+}
+
+input[type="text"]:focus,
+input[type="search"]:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--lp-ink-blue);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--lp-ink-blue) 14%, transparent);
+  outline: none;
+}
+
+button {
+  border-radius: 2px;
+  border: 1px solid var(--lp-rule);
+  background: var(--color-base-05);
+  color: var(--lp-ink-soft);
+  box-shadow: none;
+}
+
+button:hover {
+  border-color: var(--lp-rule-strong);
+  color: var(--lp-ink);
+  background: var(--color-base-10);
+}
+
+button.mod-cta {
+  background: var(--lp-ink-blue);
+  border-color: var(--lp-ink-blue);
+  color: var(--color-base-00);
+}
+
+button.mod-cta:hover {
+  background: var(--lp-ink-blue-deep);
+  border-color: var(--lp-ink-blue-deep);
+  color: var(--color-base-00);
+}
+
+button.mod-warning {
+  background: var(--lp-vermilion);
+  border-color: var(--lp-vermilion);
+  color: var(--color-base-00);
+}
+
+.checkbox-container {
+  border-radius: 2px;
+  background: var(--lp-rule-strong);
+}
+
+.checkbox-container.is-enabled {
+  background: var(--lp-ink-blue);
+}
+
+.checkbox-container::after {
+  border-radius: 1px;
+}
+
+input[type="range"] {
+  accent-color: var(--lp-ink-blue);
+}
+
+/* —— 菜单 —— */
+.menu {
+  background: var(--lp-paper);
+  border: 1px solid var(--lp-rule-strong);
+  border-radius: 2px;
+  padding: 0.25em;
+  box-shadow: var(--shadow-s);
+}
+
+.menu-item {
+  border-radius: 1px;
+  font-size: 0.84em;
+  padding: 0.35em 0.6em;
+  color: var(--lp-ink-soft);
+}
+
+.menu-item:hover,
+.menu-item.selected {
+  background: color-mix(in srgb, var(--lp-ink-blue) 10%, transparent);
+  color: var(--lp-ink);
+}
+
+.menu-item.is-disabled {
+  color: var(--lp-ink-faint);
+}
+
+.menu-separator {
+  border-block-end: 1px solid var(--lp-rule-faint);
+  margin-block: 0.25em;
+}
+
+/* —— 弹窗 —— */
+.modal {
+  background: var(--lp-paper);
+  border: 1px solid var(--lp-rule-strong);
+  border-radius: 2px;
+  box-shadow: var(--shadow-l);
+}
+
+.modal-bg {
+  background: var(--background-modifier-cover);
+}
+
+.modal-title {
+  font-size: 1em;
+  letter-spacing: 0.03em;
+}
+
+.modal-close-button {
+  color: var(--lp-ink-faint);
+  border-radius: 1px;
+}
+
+.modal-close-button:hover {
+  color: var(--lp-ink);
+  background: var(--lp-tint);
+}
+
+/* —— 命令面板 —— */
+.prompt {
+  background: var(--lp-paper);
+  border: 1px solid var(--lp-rule-strong);
+  border-radius: 2px;
+  box-shadow: var(--shadow-l);
+}
+
+.prompt-input-container {
+  border-bottom: 1px solid var(--lp-rule);
+  padding: 0.45em 0.8em;
+}
+
+.prompt-input {
+  font-size: 0.95em;
+  letter-spacing: 0.02em;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+.prompt-results {
+  padding: 0.3em;
+}
+
+.suggestion-item {
+  border-radius: 1px;
+  font-size: 0.86em;
+}
+
+.suggestion-item.is-selected {
+  background: color-mix(in srgb, var(--lp-ink-blue) 11%, transparent);
+  box-shadow: inset 2px 0 0 var(--lp-ink-blue);
+  color: var(--lp-ink);
+}
+
+.suggestion-highlight {
+  color: var(--lp-ink-blue);
+  font-weight: 600;
+}
+
+/* —— 搜索 —— */
+.search-result {
+  border: none;
+  border-bottom: 1px dotted var(--lp-rule);
+  border-radius: 0;
+  background: transparent;
+}
+
+.search-result:hover {
+  background: var(--lp-tint);
+}
+
+.search-result-file-title {
+  font-size: 0.86em;
+}
+
+.search-result-file-matched-text {
+  color: var(--lp-vermilion);
+  background: color-mix(in srgb, var(--lp-highlight) 24%, transparent);
+}
+
+.search-input-container input {
+  font-size: 0.88em;
+}
+
+/* —— 设置面板 —— */
+.vertical-tab-header {
+  background: var(--lp-paper-2);
+  border-inline-end: 1px solid var(--lp-rule);
+}
+
+.vertical-tab-nav-item {
+  border-radius: 1px;
+  font-size: 0.84em;
+  color: var(--lp-ink-mute);
+}
+
+.vertical-tab-nav-item.is-active {
+  background: var(--lp-tint-strong);
+  box-shadow: inset 2px 0 0 var(--lp-vermilion);
+  color: var(--lp-ink);
+}
+
+.setting-item {
+  border-top: 1px solid color-mix(in srgb, var(--lp-rule) 80%, transparent);
+  padding-block: 0.9em;
+}
+
+.setting-item-name {
+  font-size: 0.92em;
+  letter-spacing: 0.01em;
+}
+
+.setting-item-description {
+  font-size: 0.78em;
+  color: var(--lp-ink-faint);
+  line-height: 1.6;
+}
+
+.setting-item-control button {
+  min-width: 5em;
+}
+
+/* —— 提示与通知 —— */
+.tooltip {
+  background: var(--lp-ink);
+  color: var(--lp-paper);
+  border-radius: 2px;
+  font-size: 0.76em;
+  letter-spacing: 0.03em;
+  padding: 0.3em 0.55em;
+}
+
+.notice {
+  background: var(--lp-paper);
+  border: 1px solid var(--lp-rule-strong);
+  border-radius: 2px;
+  box-shadow: var(--shadow-s);
+  font-size: 0.86em;
+  color: var(--lp-ink-soft);
+}
+
+/* —— 编辑器细节：朱红笔尖、极淡的当前行 —— */
+.markdown-source-view.mod-cm6 .cm-line.cm-active {
+  background: color-mix(in srgb, var(--lp-ink) 3%, transparent);
+}
+
+.markdown-source-view.mod-cm6 .cm-cursor,
+.cm-s-obsidian .cm-cursor {
+  border-inline-start: 2px solid var(--lp-vermilion);
+}
+
+.markdown-source-view.mod-cm6 .cm-selectionBackground,
+.markdown-source-view.mod-cm6 .cm-content ::selection {
+  background: var(--text-selection);
+}
+
+.cm-searchMatch {
+  background: color-mix(in srgb, var(--lp-highlight) 42%, transparent);
+  border-radius: 1px;
+}
+
+.cm-searchMatch-selected {
+  background: color-mix(in srgb, var(--lp-highlight) 70%, transparent);
+}
+
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-header {
+  letter-spacing: 0.02em;
+}
+
+.markdown-source-view.mod-cm6 .cm-formatting {
+  color: var(--lp-ink-faint);
+}
+
+/* 实时预览里只保留能安全加在编辑器行上的装饰：标题的双线 / 书眉线。
+   菱形与章节编号只在阅读视图出现——编辑器的行是虚拟滚动的，计数器会数错。 */
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-header-1 {
+  border-bottom: 3px double var(--lp-rule-strong);
+  padding-bottom: 0.15em;
+}
+
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-header-2 {
+  border-bottom: 1px solid var(--lp-rule);
+  padding-bottom: 0.22em;
+}
+
+/* -----------------------------------------------------------------------------
+   05 · callout：页边注 —— 不填色，只有一条语义色细线和一枚小标签
+   -------------------------------------------------------------------------- */
+
+.callout {
+  --callout-color: var(--callout-default);
+  background: transparent;
+  border: none;
+  border-inline-start: 2px solid rgb(var(--callout-color));
+  border-radius: 0;
+  padding: var(--callout-padding);
+  margin-block: 1.15em;
+  mix-blend-mode: normal;
+}
+
+.callout-title {
+  color: rgb(var(--callout-color));
+  font-size: 0.8em;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1.5;
+  gap: 0.45em;
+}
+
+.callout-title-inner {
+  color: inherit;
+}
+
+.callout-icon {
+  color: inherit;
+}
+
+.callout-icon svg {
+  inline-size: 0.95em;
+  block-size: 0.95em;
+}
+
+.callout-fold {
+  color: inherit;
+  opacity: 0.7;
+}
+
+.callout-content {
+  padding-block: 0.15em 0;
+  color: var(--lp-ink-soft);
+}
+
+.callout-content > :first-child {
+  margin-block-start: 0.25em;
+}
+
+.callout-content > :last-child {
+  margin-block-end: 0;
+}
+
+.callout[data-callout="scene"] {
+  --callout-color: var(--callout-scene);
+}
+
+.callout[data-callout="author"] {
+  --callout-color: var(--callout-author);
+}
+
+/* callout 与嵌入里不要章节号，也不许它们推进计数器，否则编号会出现空档 */
+.callout h2,
+.markdown-embed h2 {
+  counter-increment: none;
+}
+
+.callout h2::before,
+.markdown-embed h2::before {
+  content: none;
+}
+
+/* -----------------------------------------------------------------------------
+   06 · 插件：宽表、看板、图谱、画布
+   -------------------------------------------------------------------------- */
+
+/* Dataview / Bases 的表格沿用账簿样式；仅补一点密度和断词。 */
+.dataview.table-view-table,
+.block-language-dataview table {
+  font-size: 0.9em;
+}
+
+.dataview.table-view-table th,
+.dataview.table-view-table td {
+  white-space: normal;
+  word-break: break-word;
+}
+
+.dataview-error {
+  color: var(--lp-vermilion);
+  font-size: 0.84em;
+}
+
+.dataview.list-view-ul > li::marker {
+  color: var(--lp-ink-mute);
+}
+
+/* Kanban */
+.kanban-plugin__lane {
+  background: var(--lp-paper-2);
+  border: 1px solid var(--lp-rule);
+  border-radius: 2px;
+}
+
+.kanban-plugin__lane-header-wrapper {
+  border-bottom: 1px solid var(--lp-rule);
+}
+
+.kanban-plugin__item {
+  background: var(--lp-paper);
+  border: 1px solid var(--lp-rule);
+  border-radius: 1px;
+  box-shadow: none;
+  font-size: 0.92em;
+}
+
+.kanban-plugin__item:hover {
+  border-color: var(--lp-rule-strong);
+}
+
+.kanban-plugin__item-title-wrapper {
+  padding-block: 0.5em;
+}
+
+/* 图谱 */
+.graph-controls {
+  background: var(--lp-paper);
+  border: 1px solid var(--lp-rule);
+  border-radius: 2px;
+  box-shadow: none;
+}
+
+/* 画布 */
+.canvas-node-container {
+  border-radius: 2px;
+}
+
+.canvas-node-label {
+  font-size: 0.78em;
+  letter-spacing: 0.06em;
+  color: var(--lp-ink-faint);
+}
+
+/* -----------------------------------------------------------------------------
+   07 · 样式开关（Style Settings）
+   -------------------------------------------------------------------------- */
+
+body.lp-width-narrow {
+  --lp-measure: 30em;
+}
+
+body.lp-width-standard {
+  --lp-measure: 34em;
+}
+
+body.lp-width-wide {
+  --lp-measure: 42em;
+}
+
+
+body.lp-no-grain .markdown-reading-view .markdown-preview-view,
+body.lp-no-grain .markdown-source-view.mod-cm6 .cm-scroller {
+  background-image: none;
+}
+
+body.lp-no-margin .markdown-reading-view .markdown-preview-sizer::before {
+  display: none;
+}
+
+body.lp-flat {
+  --radius-s: 0px;
+  --radius-m: 0px;
+  --radius-l: 0px;
+  --radius-xl: 0px;
+  --tab-radius: 0px;
+  --checkbox-radius: 0px;
+  --code-radius: 0px;
+  --tag-radius: 0px;
+  --nav-item-radius: 0px;
+}
+
+/* -----------------------------------------------------------------------------
+   08 · 打印
+   -------------------------------------------------------------------------- */
+
+@media print {
+  body.theme-light,
+  body.theme-dark {
+    --background-primary: #ffffff;
+    --background-secondary: #ffffff;
+    --text-normal: #000000;
+    --text-muted: #333333;
+    --lp-rule: #c9c9c9;
+    --lp-rule-strong: #8a8a8a;
+    --lp-ink-blue: #1f3a4d;
+    --lp-vermilion: #8d2b1f;
+  }
+
+  .markdown-reading-view .markdown-preview-view {
+    background-image: none !important;
+  }
+
+  .callout,
+  .markdown-rendered table,
+  .markdown-rendered pre,
+  .markdown-rendered blockquote {
+    break-inside: avoid;
+  }
+
+  .markdown-rendered table {
+    font-size: 0.85em;
+  }
+
+  .markdown-rendered a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .markdown-rendered a.external-link::after {
+    content: "";
+  }
+
+  .markdown-rendered h2::before {
+    color: #000000;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   09 · 移动端与无障碍
+   -------------------------------------------------------------------------- */
+
+.is-mobile {
+  --file-margins: 1.5rem 1.15rem 4rem;
+  --lp-measure: 100%;
+}
+
+.is-mobile .markdown-rendered p {
+  text-indent: 2em;
+}
+
+.is-mobile .inline-title {
+  padding-block: 0.6em 0.4em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .markdown-rendered .task-list-item-checkbox,
+  .workspace-tab-header,
+  .menu-item,
+  .suggestion-item,
+  .nav-file-title {
+    transition: none;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   09.5 · 实时预览：把书本版面搬进编辑器
+   你基本不开阅读模式，这里不是"兼容"，是主战场。
+   -------------------------------------------------------------------------- */
+
+/* 段首缩进。
+   实时预览里一个段落本身就是一个 .cm-line，软换行只是视觉折行，
+   所以 text-indent 只缩段首那一行——正好是中文书要的效果。
+   带 HyperMD- 前缀的行（标题/清单/引用/代码/表格/分割线）一律不缩。 */
+.markdown-source-view.mod-cm6 .cm-line:not([class*="HyperMD"]):not(.cm-hmd-frontmatter) {
+  text-indent: 2em;
+  text-align: justify;
+  text-justify: inter-character;
+}
+
+.markdown-source-view.mod-cm6 .cm-line[class*="HyperMD"],
+.markdown-source-view.mod-cm6 .cm-line.cm-hmd-frontmatter {
+  text-indent: 0;
+}
+
+/* 标题标记：H2 一枚小方块，H3 一枚菱形，和阅读视图同一套语言 */
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-header-2::before {
+  content: "";
+  display: inline-block;
+  inline-size: 0.32em;
+  block-size: 0.32em;
+  background: var(--lp-vermilion);
+  margin-inline-end: 0.55em;
+  vertical-align: 0.12em;
+}
+
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-header-3::before {
+  content: "";
+  display: inline-block;
+  inline-size: 0.34em;
+  block-size: 0.34em;
+  background: var(--lp-vermilion);
+  transform: rotate(45deg);
+  margin-inline-end: 0.5em;
+  vertical-align: 0.18em;
+}
+
+/* 分割线：实时预览里是 .hr 容器里一条 flex 的 <hr>，题花照样用背景层画 */
+.markdown-source-view.mod-cm6 hr {
+  border: none;
+  block-size: 1.05em;
+  margin: 0;
+  flex: 1 0 0;
+  background-repeat: no-repeat, no-repeat;
+  background-size: 12px 12px, 100% 1px;
+  background-position: center, center;
+}
+
+.theme-light .markdown-source-view.mod-cm6 hr {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Crect x='3.4' y='3.4' width='5.2' height='5.2' transform='rotate(45 6 6)' fill='%23fbfbf8' stroke='%23b03a2c' stroke-width='1'/%3E%3C/svg%3E"), linear-gradient(var(--lp-rule), var(--lp-rule));
+}
+
+.theme-dark .markdown-source-view.mod-cm6 hr {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Crect x='3.4' y='3.4' width='5.2' height='5.2' transform='rotate(45 6 6)' fill='%2316171a' stroke='%23e0796a' stroke-width='1'/%3E%3C/svg%3E"), linear-gradient(var(--lp-rule), var(--lp-rule));
+}
+
+/* 表格：实时预览里的表格是渲染出来的 table，账簿样式照搬过来 */
+.markdown-source-view.mod-cm6 .cm-table-widget th {
+  border: none;
+  border-bottom: 3px double var(--lp-rule-strong);
+  background: transparent;
+  text-align: start;
+  padding: 0.42em 0.5em;
+  font-weight: 600;
+  white-space: normal;
+}
+
+.markdown-source-view.mod-cm6 .cm-table-widget td {
+  border: none;
+  border-bottom: 1px solid var(--lp-rule);
+  padding: 0.38em 0.5em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.55;
+}
+
+.markdown-source-view.mod-cm6 .cm-table-widget th + th,
+.markdown-source-view.mod-cm6 .cm-table-widget td + td {
+  border-inline-start: 1px solid color-mix(in srgb, var(--lp-rule) 62%, transparent);
+}
+/* -----------------------------------------------------------------------------
+   11 · mermaid：把正文排版隔离在图表外面
+   mermaid 会先按 16px / 1.5 量好每个节点的尺寸，再把标签以 HTML 塞进
+   <foreignObject>。如果让它继承正文的 20px / 1.8，字就比框大 —— 于是溢出、
+   被裁、叠在一起。所以这里必须把字号行高钉回它自己计算时用的值。
+   -------------------------------------------------------------------------- */
+
+.mermaid,
+.mermaid svg {
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: normal;
+  word-spacing: normal;
+}
+
+.mermaid foreignObject div,
+.mermaid foreignObject span,
+.mermaid foreignObject p,
+.mermaid .label,
+.mermaid .nodeLabel,
+.mermaid .cluster-label {
+  margin: 0;
+  padding: 0;
+  font-size: inherit;
+  line-height: 1.5;
+  letter-spacing: normal;
+  word-spacing: normal;
+  text-indent: 0;
+  text-align: center;
+  background: transparent;
+}
+
+/* 连线上的小标签比节点字再小一号，和 mermaid 自己的比例一致 */
+.mermaid .edgeLabel,
+.mermaid .edgeLabel p,
+.mermaid .edgeLabel span {
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* 整图滤镜会让 SVG 被栅格化（放大或滚动后发虚），这里关掉；
+   标签背后的 backdrop-blur 同样会糊，一并取消。 */
+.mermaid svg {
+  filter: none;
+  max-width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.mermaid foreignObject {
+  overflow: visible;
+}
+
+/* 连线标签：背后的 backdrop-blur 会把图糊在半透明灰底下，
+   于是底色中间深、边缘浅，字也跟着发虚 —— 这里必须用 !important 压过 snippet。 */
+.mermaid svg .edgeLabel,
+.mermaid svg .edgeLabel * {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* mermaid 在标签文字（span / p）上又盖了第二层 80% 灰底。
+   外层 labelBkg 已经是纸色，但这层灰会让背后的连线透出来 ——
+   就是那条"穿过标签的灰色竖线"。把它清掉，只留外层那一块纸。 */
+.mermaid svg foreignObject span,
+.mermaid svg foreignObject p {
+  background-color: transparent !important;
+}
+/* 标签底色改成纸色，读起来像一枚盖上去的小标签，而不是一块灰雾 */
+.theme-light .mermaid svg .edgeLabel foreignObject div {
+  background-color: #fbfbf8 !important;
+  color: #4e4e46 !important;
+}
+
+.theme-dark .mermaid svg .edgeLabel foreignObject div {
+  background-color: #16171a !important;
+  color: #dadbd5 !important;
+}
+
+/* 新版 mermaid 把菱形之类的节点画成 <path>，只写 rect/polygon 的样式会漏掉它们，
+   于是那些节点会退回 mermaid 自己的主题色（浅米底 + 暖灰边），和矩形不同套。
+   这里把 path 一并染成同一套颜色，图里就不会出现两种质感的节点。 */
+.theme-light .mermaid svg .node path,
+.theme-light .mermaid svg .node polygon,
+.theme-light .mermaid svg .node rect {
+  fill: #dbe9ef !important;
+  stroke: #75909d !important;
+  stroke-width: 1.5px;
+}
+
+.theme-dark .mermaid svg .node path,
+.theme-dark .mermaid svg .node polygon,
+.theme-dark .mermaid svg .node rect {
+  fill: #2e4a58 !important;
+  stroke: #7ea5b5 !important;
+  stroke-width: 1.5px;
+}
+
+/* 整图 drop-shadow 会让 SVG 进合成层，缩放/滚动后更容易发虚；浅色下直接不要 */
+.theme-light .mermaid svg {
+  filter: none !important;
+}
+/* 图表本身不要被正文的缩进/对齐影响 */
+.markdown-reading-view .mermaid,
+.markdown-source-view.mod-cm6 .mermaid {
+  text-indent: 0;
+  text-align: center;
+}
+/* -----------------------------------------------------------------------------
+   结语：这套主题没有第三种颜色。
+   蓝黑负责「去哪里」，朱红负责「注意这里」，其余全是纸和墨。
+   -------------------------------------------------------------------------- */
+
+
