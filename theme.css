@@ -2279,7 +2279,7 @@ body.is-mobile {
 
 /* 编辑器里用 box-shadow 画外层那道细线（inline span 外侧的伪元素不可靠） */
 .markdown-source-view.mod-cm6 .cm-hashtag-end {
-  box-shadow: 4px 4px 0 -3px color-mix(in srgb, var(--lp-ink-blue) 45%, transparent);
+  box-shadow: 3px 3px 0 -2.5px color-mix(in srgb, var(--lp-ink-blue) 40%, transparent);
 }
 
 
@@ -2291,11 +2291,11 @@ body.is-mobile {
   font-style: normal;
   -webkit-text-emphasis: none;
   text-emphasis: none;
-  background-image: radial-gradient(circle, var(--lp-ink) 0 1.15px, transparent 1.6px);
+  background-image: radial-gradient(circle, var(--lp-ink) 0 1.3px, transparent 1.8px);
   background-size: 1em 1em;
-  background-position: 0 calc(100% + 0.06em);
+  background-position: 0 100%;
   background-repeat: repeat-x;
-  padding-bottom: 0.16em;
+  padding-bottom: 0.7em;
 }
 /* -----------------------------------------------------------------------------
    结语：这套主题没有第三种颜色。
