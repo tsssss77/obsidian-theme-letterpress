@@ -936,16 +936,41 @@ body.lp-paragraph-space .markdown-rendered p {
 }
 
 /* —— 标签 —— */
+/* 标签：仿民国报刊的「双框」——粗外框 + 只走右下的一段细衬线。
+   细线用背景渐变画在伪元素上，长度只到 60%，就是旧报刊那种"印不全"的味道。 */
 .tag,
 .markdown-rendered a.tag {
-  font-size: 0.76em;
-  letter-spacing: 0.04em;
-  border: 1px solid var(--tag-border-color);
-  border-radius: 1px;
-  padding: 0.06em 0.42em;
+  position: relative;
+  display: inline-block;
+  font-size: 0.74em;
+  letter-spacing: 0.05em;
+  line-height: 1.5;
+  border: 1.5px solid color-mix(in srgb, var(--lp-ink-blue) 78%, transparent);
+  border-radius: 0;
+  padding: 0.1em 0.55em 0.14em;
   background: transparent;
   color: var(--lp-ink-blue);
   text-decoration: none;
+  vertical-align: 0.02em;
+}
+
+.tag::after,
+.markdown-rendered a.tag::after {
+  content: "";
+  position: absolute;
+  inset: 2.5px;
+  pointer-events: none;
+  background:
+    linear-gradient(to left, currentColor 0 100%) right bottom / 64% 1px no-repeat,
+    linear-gradient(to top, currentColor 0 100%) right bottom / 1px 60% no-repeat;
+  opacity: 0.85;
+}
+
+.tag:hover,
+.markdown-rendered a.tag:hover {
+  background-color: color-mix(in srgb, var(--lp-ink-blue) 8%, transparent);
+  border-color: var(--lp-ink-blue);
+  color: var(--lp-ink-blue-deep);
 }
 
 .tag:hover {
