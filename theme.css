@@ -1995,12 +1995,13 @@ body.is-phone .workspace-drawer-tab-options.is-collapsed {
   margin-right: calc(var(--safe-area-inset-side) + var(--touch-size-m));
 }
 
-/* 齿轮：绝对定位到抽屉右下角，垂直位置对齐那一行 */
+/* 齿轮：绝对定位到抽屉右下角，抬到「文件列表」那一行的高度上。
+   注意别用嵌套 max() 去算安全区 —— 变量缺失时整条声明会失效、元素会「消失」。 */
 body.is-phone .workspace-drawer .workspace-drawer-header > .clickable-icon,
 body.is-phone .workspace-drawer-header-icon {
   position: absolute;
-  inset-inline-end: 8px;
-  bottom: max(0px, max(var(--safe-area-inset-bottom), var(--size-4-4)));
+  inset-inline-end: 0.6rem;
+  inset-block-end: calc(var(--safe-area-inset-bottom, 0px) + 1.9rem);
   margin: 0;
   align-self: auto;
 }
