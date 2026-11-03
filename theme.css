@@ -1995,15 +1995,22 @@ body.is-phone .workspace-drawer-tab-options.is-collapsed {
   margin-right: calc(var(--safe-area-inset-side) + var(--touch-size-m));
 }
 
-/* 齿轮：绝对定位到抽屉右下角，抬到「文件列表」那一行的高度上。
-   注意别用嵌套 max() 去算安全区 —— 变量缺失时整条声明会失效、元素会「消失」。 */
+/* 齿轮：留在文档流里（绝对定位在 display:contents 容器里参照物不可靠，会整块消失），
+   用负的上外边距把它顶进「文件列表」那一行的高度上，再靠右对齐。 */
 body.is-phone .workspace-drawer .workspace-drawer-header > .clickable-icon,
-body.is-phone .workspace-drawer-header-icon {
-  position: absolute;
-  inset-inline-end: 0.6rem;
-  inset-block-end: calc(var(--safe-area-inset-bottom, 0px) + 1.9rem);
-  margin: 0;
-  align-self: auto;
+body.is-phone .workspace-drawer-header-icon,
+body.is-mobile .workspace-drawer .workspace-drawer-header > .clickable-icon,
+body.is-mobile .workspace-drawer-header-icon {
+  order: 11;
+  align-self: flex-end;
+  margin: -2.9rem 0.7rem 0 auto;
+}
+
+/* 折叠箭头挪到文字旁边（Baseline 的做法），把右边整段让出来 */
+body.is-phone .workspace-drawer .workspace-drawer-active-tab-chevron,
+body.is-mobile .workspace-drawer .workspace-drawer-active-tab-chevron {
+  margin-inline-start: 0.15em;
+  margin-inline-end: auto;
 }
 /* 移动端：这里必须写 body.is-mobile。
    只写 .is-mobile 的话特异性输给上面 body.theme-light 那组，
