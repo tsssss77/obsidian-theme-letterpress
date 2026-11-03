@@ -945,7 +945,7 @@ body.lp-paragraph-space .markdown-rendered p {
   font-size: 0.74em;
   letter-spacing: 0.05em;
   line-height: 1.5;
-  border: 1px solid color-mix(in srgb, var(--lp-ink-blue) 55%, transparent);
+  border: 2px solid color-mix(in srgb, var(--lp-ink-blue) 72%, transparent);
   border-radius: 0;
   padding: 0.1em 0.55em 0.14em;
   background: transparent;
@@ -954,16 +954,17 @@ body.lp-paragraph-space .markdown-rendered p {
   vertical-align: 0.02em;
 }
 
+/* 外层的两道细线：画在粗框**外面**的右下角，只走一段，就是旧报刊那种衬线 */
 .tag::after,
 .markdown-rendered a.tag::after {
   content: "";
   position: absolute;
-  inset: 2.5px;
+  inset: -5px;
   pointer-events: none;
   background:
-    linear-gradient(to left, currentColor 0 100%) right bottom / 62% 2px no-repeat,
-    linear-gradient(to top, currentColor 0 100%) right bottom / 2px 58% no-repeat;
-  opacity: 0.9;
+    linear-gradient(to left, currentColor 0 100%) right bottom / 62% 1px no-repeat,
+    linear-gradient(to top, currentColor 0 100%) right bottom / 1px 58% no-repeat;
+  opacity: 0.7;
 }
 
 .tag:hover,
@@ -2264,38 +2265,37 @@ body.is-mobile {
 /* 实时预览里一个标签被拆成两个 span（# 和正文），所以框要分两半拼：
    左边的 span 画左/上/下，右边的画右/上/下，拼起来才是一个完整的框。 */
 .markdown-source-view.mod-cm6 .cm-hashtag-begin {
-  border-inline-start: 1px solid color-mix(in srgb, var(--lp-ink-blue) 55%, transparent);
-  border-block: 1px solid color-mix(in srgb, var(--lp-ink-blue) 55%, transparent);
+  border-inline-start: 2px solid color-mix(in srgb, var(--lp-ink-blue) 72%, transparent);
+  border-block: 2px solid color-mix(in srgb, var(--lp-ink-blue) 72%, transparent);
   padding-inline-start: 0.45em;
 }
 
 .markdown-source-view.mod-cm6 .cm-hashtag-end {
-  border-inline-end: 1px solid color-mix(in srgb, var(--lp-ink-blue) 55%, transparent);
-  border-block: 1px solid color-mix(in srgb, var(--lp-ink-blue) 55%, transparent);
+  position: relative;
+  border-inline-end: 2px solid color-mix(in srgb, var(--lp-ink-blue) 72%, transparent);
+  border-block: 2px solid color-mix(in srgb, var(--lp-ink-blue) 72%, transparent);
   padding-inline-end: 0.45em;
-  /* 粗线只走右下、只到 60% —— 和阅读视图同一套 */
-  background:
-    linear-gradient(to left, currentColor 0 100%) right bottom / 62% 2px no-repeat,
-    linear-gradient(to top, currentColor 0 100%) right bottom / 2px 58% no-repeat;
 }
 
-/* 行首是标签的段落不缩进（阅读视图 + 实时预览） */
-.markdown-rendered p:has(> a.tag:first-child),
-.markdown-source-view.mod-cm6 .cm-line:has(.cm-hashtag-begin:first-child) {
-  text-indent: 0;
+/* 编辑器里用 box-shadow 画外层那道细线（inline span 外侧的伪元素不可靠） */
+.markdown-source-view.mod-cm6 .cm-hashtag-end {
+  box-shadow: 4px 4px 0 -3px color-mix(in srgb, var(--lp-ink-blue) 45%, transparent);
 }
 
-/* 中文的「斜体」不倾斜，改用着重号——文中说过的事，这里真的做 */
+
+/* 中文的「斜体」不倾斜，改用着重号。
+   用背景圆点而不是 text-emphasis：后者在 Chrome 里会把这行撑高、而且点离字太远。 */
 .markdown-rendered em,
 .markdown-rendered i,
 .markdown-source-view.mod-cm6 .cm-em {
   font-style: normal;
-  -webkit-text-emphasis: filled dot;
-  text-emphasis: filled dot;
-  -webkit-text-emphasis-position: under right;
-  text-emphasis-position: under right;
-  -webkit-text-emphasis-color: var(--lp-ink-soft);
-  text-emphasis-color: var(--lp-ink-soft);
+  -webkit-text-emphasis: none;
+  text-emphasis: none;
+  background-image: radial-gradient(circle, var(--lp-ink) 0 1.15px, transparent 1.6px);
+  background-size: 1em 1em;
+  background-position: 0 calc(100% + 0.06em);
+  background-repeat: repeat-x;
+  padding-bottom: 0.16em;
 }
 /* -----------------------------------------------------------------------------
    结语：这套主题没有第三种颜色。
