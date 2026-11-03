@@ -1938,30 +1938,57 @@ body.lp-flat {
    09 · 移动端与无障碍
    -------------------------------------------------------------------------- */
 
-/* 移动端抽屉：默认布局里「库名 + 文件/字数统计」那一行（.workspace-drawer-header）
-   排在抽屉最底部，和上面的列表挤在一起，上下不平衡。
-   抽屉内层是 flex 列，把这个 header 的 order 提到最前面就能挪到顶部。 */
-body.is-mobile .workspace-drawer-inner > .workspace-drawer-header,
-body.is-phone .workspace-drawer-inner > .workspace-drawer-header {
-  order: -1;
-  position: static;
-  flex-shrink: 0;
-  padding: 0.55em 1rem 0.5em;
+/* 移动端抽屉头部：默认这一行（库名 + 文件数 + 字数 + 齿轮）被 core 的
+   .nav-header { order: 10; margin-top: auto } 钉在抽屉底部。
+   这里让 header 退成 display:contents，它的两个子块就能各自参与排序：
+   左块（库名 / 统计）提到最上，图标（齿轮）放回最下。 */
+body.is-mobile .workspace-drawer .workspace-drawer-header,
+body.is-phone .workspace-drawer .workspace-drawer-header {
+  display: contents;
+}
+
+body.is-mobile .workspace-drawer .workspace-drawer-header-left,
+body.is-phone .workspace-drawer .workspace-drawer-header-left {
+  order: -2;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 0.7em;
+  padding: 0.5em 1rem 0.45em;
   border-bottom: 1px solid var(--lp-rule);
 }
 
-body.is-mobile .workspace-drawer-header-name-text,
-body.is-phone .workspace-drawer-header-name-text {
+body.is-mobile .workspace-drawer .workspace-drawer-header-name,
+body.is-phone .workspace-drawer .workspace-drawer-header-name {
+  margin-inline-end: auto;
+}
+
+body.is-mobile .workspace-drawer .workspace-drawer-header-name-text,
+body.is-phone .workspace-drawer .workspace-drawer-header-name-text {
   font-family: var(--font-interface);
-  font-size: var(--font-ui-small);
+  font-size: var(--font-ui-medium);
   font-weight: 600;
   letter-spacing: 0.02em;
 }
 
-body.is-mobile .workspace-drawer-header-info,
-body.is-phone .workspace-drawer-header-info {
+/* 统计挪到右边，和库名同一行 */
+body.is-mobile .workspace-drawer .workspace-drawer-header-info,
+body.is-phone .workspace-drawer .workspace-drawer-header-info {
+  margin-inline-start: 0;
+  text-align: end;
   font-size: var(--font-ui-smaller);
+  line-height: 1.45;
   color: var(--lp-ink-faint);
+}
+
+/* 齿轮按回抽屉底部（排在 nav-header 之后） */
+body.is-mobile .workspace-drawer .workspace-drawer-header > .clickable-icon,
+body.is-phone .workspace-drawer .workspace-drawer-header > .clickable-icon,
+body.is-mobile .workspace-drawer .workspace-drawer-header-icon,
+body.is-phone .workspace-drawer .workspace-drawer-header-icon {
+  order: 11;
+  align-self: flex-end;
+  margin: 0 0.7rem 0.5rem auto;
 }
 /* 移动端：这里必须写 body.is-mobile。
    只写 .is-mobile 的话特异性输给上面 body.theme-light 那组，
