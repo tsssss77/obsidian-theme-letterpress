@@ -744,7 +744,7 @@ body.lp-paragraph-space .markdown-rendered p {
 }
 
 .markdown-rendered li.task-list-item[data-task="x"] .task-list-item-checkbox {
-  opacity: 0.85;
+  opacity: 0.9;
 }
 
 /* —— 引用：朱红侧线 + 挂角引号 —— */
@@ -945,7 +945,7 @@ body.lp-paragraph-space .markdown-rendered p {
   font-size: 0.74em;
   letter-spacing: 0.05em;
   line-height: 1.5;
-  border: 1.5px solid color-mix(in srgb, var(--lp-ink-blue) 78%, transparent);
+  border: 1px solid color-mix(in srgb, var(--lp-ink-blue) 55%, transparent);
   border-radius: 0;
   padding: 0.1em 0.55em 0.14em;
   background: transparent;
@@ -961,9 +961,9 @@ body.lp-paragraph-space .markdown-rendered p {
   inset: 2.5px;
   pointer-events: none;
   background:
-    linear-gradient(to left, currentColor 0 100%) right bottom / 64% 1px no-repeat,
-    linear-gradient(to top, currentColor 0 100%) right bottom / 1px 60% no-repeat;
-  opacity: 0.85;
+    linear-gradient(to left, currentColor 0 100%) right bottom / 62% 2px no-repeat,
+    linear-gradient(to top, currentColor 0 100%) right bottom / 2px 58% no-repeat;
+  opacity: 0.9;
 }
 
 .tag:hover,
@@ -2256,6 +2256,46 @@ body.is-mobile {
 .markdown-source-view.mod-cm6 .mermaid {
   text-indent: 0;
   text-align: center;
+}
+/* -----------------------------------------------------------------------------
+   12 · 编辑器里的标签、着重号，以及行首标签的缩进
+   -------------------------------------------------------------------------- */
+
+/* 实时预览里一个标签被拆成两个 span（# 和正文），所以框要分两半拼：
+   左边的 span 画左/上/下，右边的画右/上/下，拼起来才是一个完整的框。 */
+.markdown-source-view.mod-cm6 .cm-hashtag-begin {
+  border-inline-start: 1px solid color-mix(in srgb, var(--lp-ink-blue) 55%, transparent);
+  border-block: 1px solid color-mix(in srgb, var(--lp-ink-blue) 55%, transparent);
+  padding-inline-start: 0.45em;
+}
+
+.markdown-source-view.mod-cm6 .cm-hashtag-end {
+  border-inline-end: 1px solid color-mix(in srgb, var(--lp-ink-blue) 55%, transparent);
+  border-block: 1px solid color-mix(in srgb, var(--lp-ink-blue) 55%, transparent);
+  padding-inline-end: 0.45em;
+  /* 粗线只走右下、只到 60% —— 和阅读视图同一套 */
+  background:
+    linear-gradient(to left, currentColor 0 100%) right bottom / 62% 2px no-repeat,
+    linear-gradient(to top, currentColor 0 100%) right bottom / 2px 58% no-repeat;
+}
+
+/* 行首是标签的段落不缩进（阅读视图 + 实时预览） */
+.markdown-rendered p:has(> a.tag:first-child),
+.markdown-source-view.mod-cm6 .cm-line:has(.cm-hashtag-begin:first-child) {
+  text-indent: 0;
+}
+
+/* 中文的「斜体」不倾斜，改用着重号——文中说过的事，这里真的做 */
+.markdown-rendered em,
+.markdown-rendered i,
+.markdown-source-view.mod-cm6 .cm-em {
+  font-style: normal;
+  -webkit-text-emphasis: filled dot;
+  text-emphasis: filled dot;
+  -webkit-text-emphasis-position: under right;
+  text-emphasis-position: under right;
+  -webkit-text-emphasis-color: var(--lp-ink-soft);
+  text-emphasis-color: var(--lp-ink-soft);
 }
 /* -----------------------------------------------------------------------------
    结语：这套主题没有第三种颜色。
