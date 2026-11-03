@@ -1984,14 +1984,23 @@ body.is-phone .workspace-drawer .workspace-drawer-header-info {
   color: var(--lp-ink-faint);
 }
 
-/* 齿轮按回抽屉底部（排在 nav-header 之后） */
+/* 抽屉底部那一行（文件夹图标 + 文件列表 + 折叠箭头）右侧让出位置 */
+body.is-mobile .workspace-drawer .workspace-drawer-active-tab-header,
+body.is-phone .workspace-drawer .workspace-drawer-active-tab-header {
+  padding-inline-end: 3.1rem;
+}
+
+/* 齿轮不再单独占一行，而是叠到「文件列表」这一行的右端。
+   header 已经是 display:contents，所以它的定位参照物是 .workspace-drawer-inner。 */
 body.is-mobile .workspace-drawer .workspace-drawer-header > .clickable-icon,
 body.is-phone .workspace-drawer .workspace-drawer-header > .clickable-icon,
 body.is-mobile .workspace-drawer .workspace-drawer-header-icon,
 body.is-phone .workspace-drawer .workspace-drawer-header-icon {
-  order: 11;
-  align-self: flex-end;
-  margin: 0 0.7rem 0.5rem auto;
+  position: absolute;
+  inset-inline-end: 0.55rem;
+  inset-block-end: calc(var(--safe-area-inset-bottom, 0px) + 0.5rem);
+  margin: 0;
+  align-self: auto;
 }
 /* 移动端：这里必须写 body.is-mobile。
    只写 .is-mobile 的话特异性输给上面 body.theme-light 那组，
