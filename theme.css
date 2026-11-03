@@ -1950,6 +1950,9 @@ body.is-phone .workspace-drawer .workspace-drawer-header {
 body.is-mobile .workspace-drawer .workspace-drawer-header-left,
 body.is-phone .workspace-drawer .workspace-drawer-header-left {
   order: -2;
+  /* 核心给这块的是 flex: 1 1 auto，退成 contents 之后它会吸走全部剩余高度 —— 必须压掉 */
+  flex: 0 0 auto;
+  align-self: stretch;
   flex-direction: row;
   flex-wrap: wrap;
   align-items: baseline;
