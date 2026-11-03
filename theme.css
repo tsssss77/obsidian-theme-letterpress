@@ -542,7 +542,7 @@ body.theme-dark {
   inset-inline-start: 0;
   width: 2.2rem;
   height: 2px;
-  background: var(--lp-vermilion);
+  background: var(--lp-ink-blue);
 }
 
 /* —— H1：书刊式标题，双线收底 —— */
@@ -559,7 +559,7 @@ body.theme-dark {
 
 /* —— H2：书眉线 + 页边章节号 —— */
 .markdown-rendered h2 {
-  border-bottom: 1px solid var(--lp-rule);
+  border-bottom: 1px solid color-mix(in srgb, var(--lp-ink-blue) 30%, var(--lp-rule));
   padding-bottom: 0.42em;
   margin-block: 2.4em 1.15em;
   letter-spacing: 0.02em;
@@ -579,7 +579,7 @@ body.theme-dark {
   display: inline-block;
   inline-size: 0.32em;
   block-size: 0.32em;
-  background: var(--lp-vermilion);
+  background: var(--lp-ink-blue);
   margin-inline-end: 0.55em;
   vertical-align: 0.12em;
 }
@@ -590,7 +590,7 @@ body.theme-dark {
   display: inline-block;
   width: 0.34em;
   height: 0.34em;
-  background: var(--lp-vermilion);
+  background: var(--lp-ink-blue);
   transform: rotate(45deg);
   margin-inline-end: 0.5em;
   vertical-align: 0.18em;
@@ -620,7 +620,7 @@ body.theme-dark {
     inset-block: 0.4rem 2rem;
     inset-inline-start: -2.1rem;
     width: 1px;
-    background: color-mix(in srgb, var(--lp-ink) 14%, transparent);
+    background: color-mix(in srgb, var(--lp-ink-blue) 32%, transparent);
     pointer-events: none;
   }
 
@@ -857,7 +857,7 @@ body.lp-paragraph-space .markdown-rendered p {
 
 .markdown-rendered th {
   border: none;
-  border-bottom: 3px double var(--lp-rule-strong);
+  border-bottom: 3px double color-mix(in srgb, var(--lp-ink-blue) 34%, var(--lp-rule-strong));
   background: transparent;
   text-align: start;
   padding: 0.5em 0.75em;
@@ -1701,7 +1701,7 @@ input[type="range"] {
 }
 
 .markdown-source-view.mod-cm6 .cm-line.HyperMD-header-2 {
-  border-bottom: 1px solid var(--lp-rule);
+  border-bottom: 1px solid color-mix(in srgb, var(--lp-ink-blue) 30%, var(--lp-rule));
   padding-bottom: 0.22em;
 }
 
@@ -2056,7 +2056,7 @@ body.is-mobile {
   display: inline-block;
   inline-size: 0.32em;
   block-size: 0.32em;
-  background: var(--lp-vermilion);
+  background: var(--lp-ink-blue);
   margin-inline-end: 0.55em;
   vertical-align: 0.12em;
 }
@@ -2066,7 +2066,7 @@ body.is-mobile {
   display: inline-block;
   inline-size: 0.34em;
   block-size: 0.34em;
-  background: var(--lp-vermilion);
+  background: var(--lp-ink-blue);
   transform: rotate(45deg);
   margin-inline-end: 0.5em;
   vertical-align: 0.18em;
@@ -2094,7 +2094,7 @@ body.is-mobile {
 /* 表格：实时预览里的表格是渲染出来的 table，账簿样式照搬过来 */
 .markdown-source-view.mod-cm6 .cm-table-widget th {
   border: none;
-  border-bottom: 3px double var(--lp-rule-strong);
+  border-bottom: 3px double color-mix(in srgb, var(--lp-ink-blue) 34%, var(--lp-rule-strong));
   background: transparent;
   text-align: start;
   padding: 0.42em 0.5em;
