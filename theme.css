@@ -1984,21 +1984,23 @@ body.is-phone .workspace-drawer .workspace-drawer-header-info {
   color: var(--lp-ink-faint);
 }
 
-/* 抽屉底部那一行（文件夹图标 + 文件列表 + 折叠箭头）右侧让出位置 */
-body.is-mobile .workspace-drawer .workspace-drawer-active-tab-header,
-body.is-phone .workspace-drawer .workspace-drawer-active-tab-header {
-  padding-inline-end: 3.1rem;
+/* 抽屉底部那一行（文件列表 + 折叠箭头）右侧让出一个方块的位置，
+   齿轮就叠进这个缺口里 —— 做法照抄 Baseline，它这套在手机上验证过。 */
+body.is-phone .workspace-drawer-tab-options {
+  margin-inline: var(--safe-area-inset-side);
+  height: var(--touch-size-m);
 }
 
-/* 齿轮不再单独占一行，而是叠到「文件列表」这一行的右端。
-   header 已经是 display:contents，所以它的定位参照物是 .workspace-drawer-inner。 */
-body.is-mobile .workspace-drawer .workspace-drawer-header > .clickable-icon,
+body.is-phone .workspace-drawer-tab-options.is-collapsed {
+  margin-right: calc(var(--safe-area-inset-side) + var(--touch-size-m));
+}
+
+/* 齿轮：绝对定位到抽屉右下角，垂直位置对齐那一行 */
 body.is-phone .workspace-drawer .workspace-drawer-header > .clickable-icon,
-body.is-mobile .workspace-drawer .workspace-drawer-header-icon,
-body.is-phone .workspace-drawer .workspace-drawer-header-icon {
+body.is-phone .workspace-drawer-header-icon {
   position: absolute;
-  inset-inline-end: 0.55rem;
-  inset-block-end: calc(var(--safe-area-inset-bottom, 0px) + 0.5rem);
+  inset-inline-end: 8px;
+  bottom: max(0px, max(var(--safe-area-inset-bottom), var(--size-4-4)));
   margin: 0;
   align-self: auto;
 }
