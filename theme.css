@@ -1938,6 +1938,31 @@ body.lp-flat {
    09 · 移动端与无障碍
    -------------------------------------------------------------------------- */
 
+/* 移动端抽屉：默认布局里「库名 + 文件/字数统计」那一行（.workspace-drawer-header）
+   排在抽屉最底部，和上面的列表挤在一起，上下不平衡。
+   抽屉内层是 flex 列，把这个 header 的 order 提到最前面就能挪到顶部。 */
+body.is-mobile .workspace-drawer-inner > .workspace-drawer-header,
+body.is-phone .workspace-drawer-inner > .workspace-drawer-header {
+  order: -1;
+  position: static;
+  flex-shrink: 0;
+  padding: 0.55em 1rem 0.5em;
+  border-bottom: 1px solid var(--lp-rule);
+}
+
+body.is-mobile .workspace-drawer-header-name-text,
+body.is-phone .workspace-drawer-header-name-text {
+  font-family: var(--font-interface);
+  font-size: var(--font-ui-small);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+body.is-mobile .workspace-drawer-header-info,
+body.is-phone .workspace-drawer-header-info {
+  font-size: var(--font-ui-smaller);
+  color: var(--lp-ink-faint);
+}
 /* 移动端：这里必须写 body.is-mobile。
    只写 .is-mobile 的话特异性输给上面 body.theme-light 那组，
    手机就会套用桌面的 2.4rem 边距 —— 两侧空白就是这么来的。 */
