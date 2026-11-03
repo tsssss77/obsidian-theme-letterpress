@@ -1170,9 +1170,11 @@ body.lp-paragraph-space .markdown-rendered p {
   color: var(--lp-ink);
 }
 
-.metadata-property .multi-select-pill + .multi-select-pill::before {
-  content: "、";
-  color: var(--lp-ink-faint);
+/* 多值之间不用顿号连接：一旦换行，::before 会把顿号带到行首（中文标点"避首"）。
+   改成纯间距分隔，单行多行都不会出错。 */
+.metadata-property .multi-select-pill {
+  margin-inline-end: 0.5em;
+  margin-block: 0.05em;
 }
 
 .metadata-property .multi-select-pill-remove-button {
