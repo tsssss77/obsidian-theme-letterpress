@@ -986,6 +986,14 @@ body.lp-paragraph-space .markdown-rendered p {
 }
 
 /* —— 划线与高亮：荧光笔压在下三分之一 —— */
+/* 高亮：半格荧光笔的笔触，颜色交给 --highlight-background。
+   1.15 起 ==🔴🟠🟡🟢🔵🟣…== 会把颜色写进这个变量（六色），
+   旧版本没有这个变量时会退回主题的琥珀色。 */
+body.theme-light,
+body.theme-dark {
+  --highlight-opacity: 55%;
+}
+
 .markdown-rendered mark,
 .markdown-source-view.mod-cm6 .cm-highlight,
 .markdown-source-view.mod-cm6 .cm-formatting-highlight,
@@ -993,13 +1001,18 @@ body.lp-paragraph-space .markdown-rendered p {
   background-color: transparent;
   background-image: linear-gradient(
     to top,
-    color-mix(in srgb, var(--lp-highlight) 55%, transparent) 0 40%,
+    var(--highlight-background, var(--lp-highlight)) 0 40%,
     transparent 40%
   );
   color: inherit;
   padding: 0 0.05em;
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
+}
+
+/* 取色小圆点：改成直角小方块，和主题的直线条一致 */
+.cm-highlight-color-widget .highlight-swatch {
+  border-radius: 0;
 }
 
 .markdown-rendered u {
