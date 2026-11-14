@@ -2482,18 +2482,24 @@ body.lp-hover-sidebar:not(.is-mobile) .workspace > .mod-left-split.is-sidedock-c
   transform: translateX(calc(-100% - var(--ribbon-width, 44px)));
 }
 
-/* 右侧：贴着窗口右边，默认移到右边视口外 */
+/* 右侧：不能用 transform 藏 —— 它内部那条 5px 触发条是 position: fixed，
+   父级一旦有 transform，fixed 就会以父级为参照、跟着一起移出屏幕，触发区就没了。
+   所以右侧改用 inset 偏移来藏。 */
 body.lp-hover-sidebar:not(.is-mobile) .workspace > .mod-right-split.is-sidedock-collapsed {
-  inset-inline-end: 0 !important;
   inset-inline-start: auto !important;
-  transform: translateX(100%);
+  inset-inline-end: calc(var(--lp-hover-side-width) * -1) !important;
+  transform: none !important;
+  transition: inset-inline-end 0.16s ease;
 }
 
 /* 触发：左侧靠图标带，两侧都可靠自身 hover 保持 */
 body.lp-hover-sidebar:not(.is-mobile) .workspace:has(.workspace-ribbon:hover) > .mod-left-split.is-sidedock-collapsed,
-body.lp-hover-sidebar:not(.is-mobile) .workspace > .mod-left-split.is-sidedock-collapsed:hover,
-body.lp-hover-sidebar:not(.is-mobile) .workspace > .mod-right-split.is-sidedock-collapsed:hover {
+body.lp-hover-sidebar:not(.is-mobile) .workspace > .mod-left-split.is-sidedock-collapsed:hover {
   transform: none;
+}
+
+body.lp-hover-sidebar:not(.is-mobile) .workspace > .mod-right-split.is-sidedock-collapsed:hover {
+  inset-inline-end: 0 !important;
 }
 /* -----------------------------------------------------------------------------
    结语：这套主题没有第三种颜色。
