@@ -2338,15 +2338,54 @@ body.is-mobile {
   --prompt-radius: 0px;
 }
 
-body.is-mobile :is(.mobile-navbar, .mobile-navbar-action, .mobile-navbar-actions,
-  .mobile-tab, .mobile-tab-preview, .modal, .menu, .prompt, .suggestion-item,
-  .clickable-icon, .view-action, .checkbox-container, .workspace-tab-header) {
+/* —— 以下类名都是 2026-11 在真机（安卓 16 / Obsidian 1.15）上量出来的 —— */
+
+/* 底部那条导航栏：核心给的是 52px 胶囊 + 半透明底 + 投影，改成平纸 + 一根上边线 */
+body.is-mobile .mobile-navbar,
+body.is-mobile .mobile-navbar.mod-raised {
   border-radius: 0 !important;
+  background-color: var(--lp-paper-2, var(--background-primary)) !important;
+  box-shadow: none !important;
+  border-top: 1px solid var(--lp-rule);
 }
 
-/* 那些圆圈按钮的"描边"其实多是 box-shadow 画的，一并去掉 */
-body.is-mobile :is(.clickable-icon, .mobile-navbar-action, .mobile-tab, .view-action) {
+/* 导航栏里的每个动作按钮：44/52px 圆 + 1px 描边，全拍平 */
+body.is-mobile .mobile-navbar .clickable-icon,
+body.is-mobile .mobile-navbar-action {
+  border-radius: 0 !important;
+  border-color: transparent !important;
   box-shadow: none !important;
+}
+
+/* 顶栏右侧那组按钮外面套了个 44px 的胶囊（.view-actions.mod-raised），拍平 */
+body.is-mobile .view-actions,
+body.is-mobile .view-actions.mod-raised {
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+body.is-mobile .view-action.clickable-icon {
+  border-radius: 0 !important;
+  border-color: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* 抽屉右下角的设置齿轮：它一直在，只是被「文件列表」那一行的背景盖住了。
+   抬一层就露出来，正好落在那一行的右端。 */
+body.is-mobile .workspace-drawer-header .workspace-drawer-header-icon,
+body.is-mobile .workspace-drawer-header .workspace-drawer-header-icon.mod-raised {
+  position: relative;
+  z-index: 5;
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+body.is-mobile :is(.modal, .menu, .prompt, .suggestion-item, .checkbox-container,
+  .workspace-tab-header, .mobile-tab, .mobile-tab-preview) {
+  border-radius: 0 !important;
 }
 /* -----------------------------------------------------------------------------
    结语：这套主题没有第三种颜色。
