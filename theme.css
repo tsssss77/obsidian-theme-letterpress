@@ -2492,6 +2492,16 @@ body.lp-hover-sidebar:not(.is-mobile) .workspace > .mod-right-split.is-sidedock-
   transition: inset-inline-end 0.16s ease;
 }
 
+/* 右边缘的隐形触发条（5px）。它在 fixed 元素内部、且父级没有 transform，
+   所以能老老实实贴在视口右边，不受侧栏隐藏状态影响。 */
+body.lp-hover-sidebar:not(.is-mobile) .workspace > .mod-right-split.is-sidedock-collapsed::after {
+  content: "";
+  position: fixed;
+  inset-block: 0;
+  inset-inline-end: 0;
+  inline-size: 5px;
+  z-index: 41;
+}
 /* 触发：左侧靠图标带，两侧都可靠自身 hover 保持 */
 body.lp-hover-sidebar:not(.is-mobile) .workspace:has(.workspace-ribbon:hover) > .mod-left-split.is-sidedock-collapsed,
 body.lp-hover-sidebar:not(.is-mobile) .workspace > .mod-left-split.is-sidedock-collapsed:hover {
