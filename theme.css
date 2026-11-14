@@ -2388,6 +2388,38 @@ body.is-mobile :is(.modal, .menu, .prompt, .suggestion-item, .checkbox-container
   border-radius: 0 !important;
 }
 /* -----------------------------------------------------------------------------
+   14 · 移动端收尾（真机量过：安卓 16 / Obsidian 1.15）
+   -------------------------------------------------------------------------- */
+
+/* 齿轮：让出折叠箭头（箭头在 x≈322，齿轮原来压到 349） */
+body.is-mobile .workspace-drawer-header .workspace-drawer-header-icon {
+  margin-inline-end: 2.9rem;
+}
+
+/* 底部导航栏：核心给的是 22px 边距 + 10px 底距的"悬浮胶囊"，
+   文字会从那圈缝里漏出来。改成整条贴底、左右到边。 */
+body.is-mobile .mobile-navbar,
+body.is-mobile .mobile-navbar.mod-raised {
+  margin: 0 !important;
+  border-radius: 0 !important;
+  padding-inline: 8px;
+}
+
+/* 顶栏按钮：给一圈看得见的细框，和主题的方框一致 */
+body.is-mobile .view-action {
+  border: 1px solid var(--lp-rule) !important;
+  margin-inline: 2px;
+}
+
+/* 侧栏开关在移动端没用（滑动即可拉出抽屉），藏掉；"更多选项"整组挪到下面导航栏 */
+body.is-mobile .view-action.mod-left-split-toggle {
+  display: none !important;
+}
+
+body.is-mobile .view-action[aria-label*="更多选项"] {
+  display: none !important;
+}
+/* -----------------------------------------------------------------------------
    结语：这套主题没有第三种颜色。
    蓝黑负责「去哪里」，朱红负责「注意这里」，其余全是纸和墨。
    -------------------------------------------------------------------------- */
