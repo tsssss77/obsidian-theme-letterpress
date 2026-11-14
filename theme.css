@@ -80,11 +80,11 @@ settings:
     type: class-toggle
     default: false
   -
-    id: lp-mobile-read-toggle
+    id: lp-hide-mobile-read
     title: 移动端隐藏「阅读视图」按钮
-    description: 右上角那个书本图标。关了之后仍可从「更多选项」里切换。
+    description: 右上角那个书本图标。默认隐藏，需要时在「更多选项」里仍可切换。
     type: class-toggle
-    default: false
+    default: true
   -
     id: lp-mobile-hide-topbar
     title: 移动端隐藏整个顶栏
@@ -2433,17 +2433,35 @@ body.is-mobile .view-action.mod-left-split-toggle {
   display: none !important;
 }
 
-body.is-mobile .view-action[aria-label*="更多选项"] {
-  display: none !important;
-}
+
 
 /* Style Settings 开关：隐藏阅读视图按钮 / 隐藏整个顶栏 */
-body.lp-mobile-read-toggle.is-mobile .view-action[aria-label*="切换至阅读视图"] {
+body.lp-hide-mobile-read.is-mobile .view-action[aria-label*="切换至阅读视图"] {
   display: none !important;
 }
 
 body.lp-mobile-hide-topbar.is-mobile .view-header {
   display: none !important;
+}
+/* 键盘上方那条格式工具栏：同样贴底、整条到边，别做成浮在文字上的胶囊 */
+body.is-mobile .mobile-toolbar {
+  margin: 0 !important;
+  padding-inline: 0 !important;
+  border-radius: 0 !important;
+  background-color: var(--lp-paper-2, var(--background-primary)) !important;
+  box-shadow: none !important;
+  border-top: 1px solid var(--lp-rule);
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+body.is-mobile .mobile-toolbar > *,
+body.is-mobile .mobile-toolbar-options-container,
+body.is-mobile .mobile-toolbar-floating-options {
+  border-radius: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
 }
 /* -----------------------------------------------------------------------------
    结语：这套主题没有第三种颜色。
