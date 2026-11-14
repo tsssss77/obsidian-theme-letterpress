@@ -2418,7 +2418,8 @@ body.is-mobile .mobile-navbar.mod-raised {
   margin: 0 !important;
   border-radius: 0 !important;
   padding-inline: 8px;
-  width: 100% !important;   /* 核心给的是 calc(100% - 44px)，右边会漏出 44px 的正文 */
+  width: 100% !important;
+  max-width: 100% !important;   /* 核心给的是 calc(100% - 44px)，右边会漏出 44px 的正文 */
 }
 
 /* 顶栏按钮：给一圈看得见的细框，和主题的方框一致 */
