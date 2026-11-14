@@ -79,6 +79,18 @@ settings:
     description: 把界面上仅剩的几个小圆角也削平。
     type: class-toggle
     default: false
+  -
+    id: lp-mobile-read-toggle
+    title: 移动端隐藏「阅读视图」按钮
+    description: 右上角那个书本图标。关了之后仍可从「更多选项」里切换。
+    type: class-toggle
+    default: false
+  -
+    id: lp-mobile-hide-topbar
+    title: 移动端隐藏整个顶栏
+    description: 阅读时最清爽的形态，回到顶部靠滑动即可。
+    type: class-toggle
+    default: false
 */
 
 /* -----------------------------------------------------------------------------
@@ -2406,6 +2418,7 @@ body.is-mobile .mobile-navbar.mod-raised {
   margin: 0 !important;
   border-radius: 0 !important;
   padding-inline: 8px;
+  width: 100% !important;   /* 核心给的是 calc(100% - 44px)，右边会漏出 44px 的正文 */
 }
 
 /* 顶栏按钮：给一圈看得见的细框，和主题的方框一致 */
@@ -2420,6 +2433,15 @@ body.is-mobile .view-action.mod-left-split-toggle {
 }
 
 body.is-mobile .view-action[aria-label*="更多选项"] {
+  display: none !important;
+}
+
+/* Style Settings 开关：隐藏阅读视图按钮 / 隐藏整个顶栏 */
+body.lp-mobile-read-toggle.is-mobile .view-action[aria-label*="切换至阅读视图"] {
+  display: none !important;
+}
+
+body.lp-mobile-hide-topbar.is-mobile .view-header {
   display: none !important;
 }
 /* -----------------------------------------------------------------------------
