@@ -2460,9 +2460,16 @@ body:not(.is-mobile) {
   --lp-hover-side-width: 420px;
 }
 
-body.lp-hover-sidebar:not(.is-mobile) .mod-left-split.is-sidedock-collapsed,
-body.lp-hover-sidebar:not(.is-mobile) .mod-right-split.is-sidedock-collapsed {
+/* 注意：定位必须"始终"是 fixed。之前只在 hover 时 fixed，
+   鼠标一离开 fixed 立刻失效、而 width 还在过渡中 → 那 160ms 它回到文档流，
+   编辑器被推一下再弹回，就是你看到的闪动。 */
+body.lp-hover-sidebar:not(.is-mobile) .workspace > .mod-left-split.is-sidedock-collapsed,
+body.lp-hover-sidebar:not(.is-mobile) .workspace > .mod-right-split.is-sidedock-collapsed {
   display: flex !important;
+  position: fixed !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  z-index: 40 !important;
   width: 0 !important;
   overflow: hidden !important;
   transition: width 0.16s ease;
@@ -2483,10 +2490,6 @@ body.lp-hover-sidebar:not(.is-mobile) .mod-right-split.is-sidedock-collapsed::af
 body.lp-hover-sidebar:not(.is-mobile) .workspace:has(.workspace-ribbon:hover) > .mod-left-split.is-sidedock-collapsed,
 body.lp-hover-sidebar:not(.is-mobile) .workspace > .mod-left-split.is-sidedock-collapsed:hover,
 body.lp-hover-sidebar:not(.is-mobile) .workspace > .mod-right-split.is-sidedock-collapsed:hover {
-  position: fixed !important;
-  top: 0 !important;
-  bottom: 0 !important;
-  z-index: 40 !important;
   width: var(--lp-hover-side-width) !important;
   overflow: visible !important;
 }
@@ -2495,13 +2498,11 @@ body.lp-hover-sidebar:not(.is-mobile) .workspace:has(.workspace-ribbon:hover) > 
 body.lp-hover-sidebar:not(.is-mobile) .workspace > .mod-left-split.is-sidedock-collapsed:hover {
   inset-inline-start: var(--ribbon-width, 44px) !important;
   inset-inline-end: auto !important;
-  box-shadow: 1px 0 0 var(--lp-rule), 10px 0 22px -16px rgba(0, 0, 0, 0.35);
 }
 
 body.lp-hover-sidebar:not(.is-mobile) .workspace > .mod-right-split.is-sidedock-collapsed:hover {
   inset-inline-end: 0 !important;
   inset-inline-start: auto !important;
-  box-shadow: -1px 0 0 var(--lp-rule), -10px 0 22px -16px rgba(0, 0, 0, 0.35);
 }
 
 /* 展开时右侧压一根发丝线，和正文分开 */
