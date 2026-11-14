@@ -80,6 +80,12 @@ settings:
     type: class-toggle
     default: false
   -
+    id: lp-hover-sidebar
+    title: 鼠标碰到边缘时展开侧栏
+    description: 侧栏收起时，鼠标移到左侧图标带或屏幕右边缘就临时展开，移开自动收起。
+    type: class-toggle
+    default: true
+  -
     id: lp-hide-mobile-read
     title: 移动端隐藏「阅读视图」按钮
     description: 右上角那个书本图标。默认隐藏，需要时在「更多选项」里仍可切换。
@@ -2462,6 +2468,50 @@ body.is-mobile .mobile-toolbar-floating-options {
   margin: 0 !important;
   box-shadow: none !important;
   background-color: transparent !important;
+}
+/* -----------------------------------------------------------------------------
+   15 · 桌面：鼠标碰到边缘就展开侧栏
+   -------------------------------------------------------------------------- */
+
+/* 核心把收起的侧栏设成 display:none —— 没有盒子就永远不会有 :hover。
+   所以先给它一个"存在的壳"（display:flex + 宽度 0），
+   左边靠 ribbon 的 hover 触发，右边靠贴边的一条不可见细条触发。 */
+body:not(.is-mobile) {
+  --lp-hover-side-width: 280px;
+}
+
+body.lp-hover-sidebar:not(.is-mobile) .mod-left-split.is-sidedock-collapsed,
+body.lp-hover-sidebar:not(.is-mobile) .mod-right-split.is-sidedock-collapsed {
+  display: flex !important;
+  width: 0 !important;
+  overflow: hidden !important;
+  transition: width 0.16s ease;
+}
+
+/* 右边缘的隐形触发条：固定定位，宽度 5px，只负责给 :hover 用 */
+body.lp-hover-sidebar:not(.is-mobile) .mod-right-split.is-sidedock-collapsed::after {
+  content: "";
+  position: fixed;
+  inset-block: 0;
+  inset-inline-end: 0;
+  inline-size: 5px;
+  z-index: 4;
+}
+
+body.lp-hover-sidebar:not(.is-mobile) .workspace:has(.workspace-ribbon:hover) .mod-left-split.is-sidedock-collapsed,
+body.lp-hover-sidebar:not(.is-mobile) .mod-left-split.is-sidedock-collapsed:hover,
+body.lp-hover-sidebar:not(.is-mobile) .mod-right-split.is-sidedock-collapsed:hover {
+  width: var(--lp-hover-side-width) !important;
+  overflow: visible !important;
+}
+
+/* 展开时右侧压一根发丝线，和正文分开 */
+body.lp-hover-sidebar:not(.is-mobile) .mod-left-split.is-sidedock-collapsed:hover {
+  box-shadow: 1px 0 0 var(--lp-rule);
+}
+
+body.lp-hover-sidebar:not(.is-mobile) .mod-right-split.is-sidedock-collapsed:hover {
+  box-shadow: -1px 0 0 var(--lp-rule);
 }
 /* -----------------------------------------------------------------------------
    结语：这套主题没有第三种颜色。
