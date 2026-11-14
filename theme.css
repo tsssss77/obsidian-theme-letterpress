@@ -2392,7 +2392,10 @@ body.is-mobile :is(.modal, .menu, .prompt, .suggestion-item, .checkbox-container
    -------------------------------------------------------------------------- */
 
 /* 齿轮：让出折叠箭头（箭头在 x≈322，齿轮原来压到 349） */
-body.is-mobile .workspace-drawer-header .workspace-drawer-header-icon {
+/* 注意：核心那条把齿轮摆到右下的是 ody.is-mobile .workspace-drawer .workspace-drawer-header > .clickable-icon
+   （4 个类），所以这里必须写到同样长，否则压不住 */
+body.is-mobile .workspace-drawer .workspace-drawer-header > .workspace-drawer-header-icon,
+body.is-mobile .workspace-drawer .workspace-drawer-header > .clickable-icon.workspace-drawer-header-icon {
   margin-inline-end: 2.9rem;
 }
 
