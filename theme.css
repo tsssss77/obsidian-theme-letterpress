@@ -2449,25 +2449,6 @@ body.lp-hide-mobile-read.is-mobile .view-action[aria-label*="切换至阅读视�
 body.lp-mobile-hide-topbar.is-mobile .view-header {
   display: none !important;
 }
-/* 键盘上方那条格式工具栏：只把"胶囊"拍平，内部布局一概不动。
-   （上一次把子元素的 margin/padding 也清了，结果图标挤成一堆、还错位。） */
-body.is-mobile .mobile-toolbar {
-  margin: 0 !important;
-  border-radius: 0 !important;
-  background-color: var(--lp-paper-2, var(--background-primary)) !important;
-  box-shadow: none !important;
-  border-top: 1px solid var(--lp-rule);
-}
-
-body.is-mobile .mobile-toolbar-options-container {
-  border-radius: 0 !important;
-  box-shadow: none !important;
-}
-
-body.is-mobile .mobile-toolbar-option {
-  border-radius: 0 !important;
-  box-shadow: none !important;
-}
 /* -----------------------------------------------------------------------------
    15 · 桌面：鼠标碰到边缘就展开侧栏
    -------------------------------------------------------------------------- */
@@ -2476,7 +2457,7 @@ body.is-mobile .mobile-toolbar-option {
    所以先给它一个"存在的壳"（display:flex + 宽度 0），
    左边靠 ribbon 的 hover 触发，右边靠贴边的一条不可见细条触发。 */
 body:not(.is-mobile) {
-  --lp-hover-side-width: 280px;
+  --lp-hover-side-width: 420px;
 }
 
 body.lp-hover-sidebar:not(.is-mobile) .mod-left-split.is-sidedock-collapsed,
@@ -2497,11 +2478,30 @@ body.lp-hover-sidebar:not(.is-mobile) .mod-right-split.is-sidedock-collapsed::af
   z-index: 4;
 }
 
-body.lp-hover-sidebar:not(.is-mobile) .workspace:has(.workspace-ribbon:hover) .mod-left-split.is-sidedock-collapsed,
-body.lp-hover-sidebar:not(.is-mobile) .mod-left-split.is-sidedock-collapsed:hover,
-body.lp-hover-sidebar:not(.is-mobile) .mod-right-split.is-sidedock-collapsed:hover {
+/* 展开时改成浮层：position: fixed 让它脱离文档流，
+   编辑器宽度一格都不会变（Baseline 的手感就来自这里）。 */
+body.lp-hover-sidebar:not(.is-mobile) .workspace:has(.workspace-ribbon:hover) > .mod-left-split.is-sidedock-collapsed,
+body.lp-hover-sidebar:not(.is-mobile) .workspace > .mod-left-split.is-sidedock-collapsed:hover,
+body.lp-hover-sidebar:not(.is-mobile) .workspace > .mod-right-split.is-sidedock-collapsed:hover {
+  position: fixed !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  z-index: 40 !important;
   width: var(--lp-hover-side-width) !important;
   overflow: visible !important;
+}
+
+body.lp-hover-sidebar:not(.is-mobile) .workspace:has(.workspace-ribbon:hover) > .mod-left-split.is-sidedock-collapsed,
+body.lp-hover-sidebar:not(.is-mobile) .workspace > .mod-left-split.is-sidedock-collapsed:hover {
+  inset-inline-start: var(--ribbon-width, 44px) !important;
+  inset-inline-end: auto !important;
+  box-shadow: 1px 0 0 var(--lp-rule), 10px 0 22px -16px rgba(0, 0, 0, 0.35);
+}
+
+body.lp-hover-sidebar:not(.is-mobile) .workspace > .mod-right-split.is-sidedock-collapsed:hover {
+  inset-inline-end: 0 !important;
+  inset-inline-start: auto !important;
+  box-shadow: -1px 0 0 var(--lp-rule), -10px 0 22px -16px rgba(0, 0, 0, 0.35);
 }
 
 /* 展开时右侧压一根发丝线，和正文分开 */
