@@ -2449,25 +2449,24 @@ body.lp-hide-mobile-read.is-mobile .view-action[aria-label*="切换至阅读视�
 body.lp-mobile-hide-topbar.is-mobile .view-header {
   display: none !important;
 }
-/* 键盘上方那条格式工具栏：同样贴底、整条到边，别做成浮在文字上的胶囊 */
+/* 键盘上方那条格式工具栏：只把"胶囊"拍平，内部布局一概不动。
+   （上一次把子元素的 margin/padding 也清了，结果图标挤成一堆、还错位。） */
 body.is-mobile .mobile-toolbar {
   margin: 0 !important;
-  padding-inline: 0 !important;
   border-radius: 0 !important;
   background-color: var(--lp-paper-2, var(--background-primary)) !important;
   box-shadow: none !important;
   border-top: 1px solid var(--lp-rule);
-  width: 100% !important;
-  max-width: 100% !important;
 }
 
-body.is-mobile .mobile-toolbar > *,
-body.is-mobile .mobile-toolbar-options-container,
-body.is-mobile .mobile-toolbar-floating-options {
+body.is-mobile .mobile-toolbar-options-container {
   border-radius: 0 !important;
-  margin: 0 !important;
   box-shadow: none !important;
-  background-color: transparent !important;
+}
+
+body.is-mobile .mobile-toolbar-option {
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }
 /* -----------------------------------------------------------------------------
    15 · 桌面：鼠标碰到边缘就展开侧栏
