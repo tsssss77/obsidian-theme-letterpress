@@ -2460,9 +2460,9 @@ body:not(.is-mobile) {
   --lp-hover-side-width: 420px;
 }
 
-/* 注意：定位必须"始终"是 fixed。之前只在 hover 时 fixed，
-   鼠标一离开 fixed 立刻失效、而 width 还在过渡中 → 那 160ms 它回到文档流，
-   编辑器被推一下再弹回，就是你看到的闪动。 */
+/* 收起状态的侧栏：宽度固定，只做 transform 平移。
+   千万别对 width 做过渡 —— 那样收起时会一边缩一边让文件树重排，
+   视觉上就是"侧栏消失了一下"。平移则内容完全不动，只是滑出视口。 */
 body.lp-hover-sidebar:not(.is-mobile) .workspace > .mod-left-split.is-sidedock-collapsed,
 body.lp-hover-sidebar:not(.is-mobile) .workspace > .mod-right-split.is-sidedock-collapsed {
   display: flex !important;
@@ -2470,48 +2470,30 @@ body.lp-hover-sidebar:not(.is-mobile) .workspace > .mod-right-split.is-sidedock-
   top: 0 !important;
   bottom: 0 !important;
   z-index: 40 !important;
-  width: 0 !important;
-  overflow: hidden !important;
-  transition: width 0.16s ease;
+  width: var(--lp-hover-side-width) !important;
+  overflow: visible !important;
+  transition: transform 0.16s ease;
 }
 
-/* 右边缘的隐形触发条：固定定位，宽度 5px，只负责给 :hover 用 */
-body.lp-hover-sidebar:not(.is-mobile) .mod-right-split.is-sidedock-collapsed::after {
-  content: "";
-  position: fixed;
-  inset-block: 0;
-  inset-inline-end: 0;
-  inline-size: 5px;
-  z-index: 4;
+/* 左侧：贴着 ribbon 的右边，默认整块移到视口外 */
+body.lp-hover-sidebar:not(.is-mobile) .workspace > .mod-left-split.is-sidedock-collapsed {
+  inset-inline-start: var(--ribbon-width, 44px) !important;
+  inset-inline-end: auto !important;
+  transform: translateX(calc(-100% - var(--ribbon-width, 44px)));
 }
 
-/* 展开时改成浮层：position: fixed 让它脱离文档流，
-   编辑器宽度一格都不会变（Baseline 的手感就来自这里）。 */
+/* 右侧：贴着窗口右边，默认移到右边视口外 */
+body.lp-hover-sidebar:not(.is-mobile) .workspace > .mod-right-split.is-sidedock-collapsed {
+  inset-inline-end: 0 !important;
+  inset-inline-start: auto !important;
+  transform: translateX(100%);
+}
+
+/* 触发：左侧靠图标带，两侧都可靠自身 hover 保持 */
 body.lp-hover-sidebar:not(.is-mobile) .workspace:has(.workspace-ribbon:hover) > .mod-left-split.is-sidedock-collapsed,
 body.lp-hover-sidebar:not(.is-mobile) .workspace > .mod-left-split.is-sidedock-collapsed:hover,
 body.lp-hover-sidebar:not(.is-mobile) .workspace > .mod-right-split.is-sidedock-collapsed:hover {
-  width: var(--lp-hover-side-width) !important;
-  overflow: visible !important;
-}
-
-body.lp-hover-sidebar:not(.is-mobile) .workspace:has(.workspace-ribbon:hover) > .mod-left-split.is-sidedock-collapsed,
-body.lp-hover-sidebar:not(.is-mobile) .workspace > .mod-left-split.is-sidedock-collapsed:hover {
-  inset-inline-start: var(--ribbon-width, 44px) !important;
-  inset-inline-end: auto !important;
-}
-
-body.lp-hover-sidebar:not(.is-mobile) .workspace > .mod-right-split.is-sidedock-collapsed:hover {
-  inset-inline-end: 0 !important;
-  inset-inline-start: auto !important;
-}
-
-/* 展开时右侧压一根发丝线，和正文分开 */
-body.lp-hover-sidebar:not(.is-mobile) .mod-left-split.is-sidedock-collapsed:hover {
-  box-shadow: 1px 0 0 var(--lp-rule);
-}
-
-body.lp-hover-sidebar:not(.is-mobile) .mod-right-split.is-sidedock-collapsed:hover {
-  box-shadow: -1px 0 0 var(--lp-rule);
+  transform: none;
 }
 /* -----------------------------------------------------------------------------
    结语：这套主题没有第三种颜色。
