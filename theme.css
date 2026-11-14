@@ -2313,6 +2313,42 @@ body.is-mobile {
   padding-bottom: 0.7em;
 }
 /* -----------------------------------------------------------------------------
+   13 · 分割线的缩进、移动端的直角
+   -------------------------------------------------------------------------- */
+
+/* 实时预览里 --- 会渲染成一个挂在行内的小部件，那一行没有 HyperMD 类，
+   于是被段首缩进连人带线一起推了进去。这里把它排除掉。 */
+/* 特异性要和上面那条缩进规则对齐（它带两个 :not，共 5 个类），否则压不住 */
+.markdown-source-view.mod-cm6 .cm-line.hr:not(.cm-hmd-frontmatter),
+.markdown-source-view.mod-cm6 .cm-line.cm-hr:not(.cm-hmd-frontmatter),
+.markdown-source-view.mod-cm6 .cm-line:has(.cm-hr):not(.cm-hmd-frontmatter) {
+  text-indent: 0;
+}
+
+/* 移动端：Obsidian 与插件那些大圆角控件压成直角，别和主题的直线条打架 */
+body.is-mobile {
+  --radius-s: 0px;
+  --radius-m: 0px;
+  --radius-l: 0px;
+  --radius-xl: 0px;
+  --checkbox-radius: 0px;
+  --tab-radius: 0px;
+  --clickable-icon-radius: 0px;
+  --modal-radius: 0px;
+  --prompt-radius: 0px;
+}
+
+body.is-mobile :is(.mobile-navbar, .mobile-navbar-action, .mobile-navbar-actions,
+  .mobile-tab, .mobile-tab-preview, .modal, .menu, .prompt, .suggestion-item,
+  .clickable-icon, .view-action, .checkbox-container, .workspace-tab-header) {
+  border-radius: 0 !important;
+}
+
+/* 那些圆圈按钮的"描边"其实多是 box-shadow 画的，一并去掉 */
+body.is-mobile :is(.clickable-icon, .mobile-navbar-action, .mobile-tab, .view-action) {
+  box-shadow: none !important;
+}
+/* -----------------------------------------------------------------------------
    结语：这套主题没有第三种颜色。
    蓝黑负责「去哪里」，朱红负责「注意这里」，其余全是纸和墨。
    -------------------------------------------------------------------------- */
