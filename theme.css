@@ -566,11 +566,20 @@ body:not(.lp-linen) .markdown-source-view.mod-cm6 .cm-scroller {
   background-blend-mode: multiply;
 }
 
-/* 顶栏也铺同一张布纹，免得"正文有织纹、顶栏是塑料平面" */
+/* 顶栏要和纸面"同一张纸"：布纹 + 那层 multiply 噪点都得有。
+   只铺布纹的话，顶栏会比纸面亮一档（纸面被噪点压暗过）。 */
 body.lp-linen .workspace-tab-header-container,
 body.lp-linen .titlebar {
-  background-image: var(--lp-linen);
-  background-repeat: repeat;
+  background-image: var(--lp-grain), var(--lp-linen);
+  background-blend-mode: multiply, normal;
+  background-repeat: repeat, repeat;
+}
+
+/* 关掉布纹时，至少把噪点补上，保持和纸面同一亮度 */
+body:not(.lp-linen) .workspace-tab-header-container,
+body:not(.lp-linen) .titlebar {
+  background-image: var(--lp-grain);
+  background-blend-mode: multiply;
 }
 
 /* 侧栏与正文之间：用两者之间那条 3px 的拖拽把手画一根 1px 发丝线。
