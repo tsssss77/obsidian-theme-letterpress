@@ -372,8 +372,8 @@ body.theme-dark {
   --shadow-l: 0 0 0 1px var(--lp-rule-faint), 0 18px 56px hsl(220 12% 8% / 0.16);
 
   /* —— 标签页 / 标题栏 / 侧栏 —— */
-  --titlebar-background: var(--lp-paper-2);
-  --titlebar-background-focused: var(--lp-paper-2);
+  --titlebar-background: var(--background-primary);
+  --titlebar-background-focused: var(--background-primary);
   --titlebar-text-color: var(--lp-ink-mute);
   --titlebar-text-color-focused: var(--lp-ink);
   --ribbon-background: var(--lp-paper-2);
