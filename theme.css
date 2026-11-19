@@ -566,6 +566,24 @@ body:not(.lp-linen) .markdown-source-view.mod-cm6 .cm-scroller {
   background-blend-mode: multiply;
 }
 
+/* 顶栏也铺同一张布纹，免得"正文有织纹、顶栏是塑料平面" */
+body.lp-linen .workspace-tab-header-container,
+body.lp-linen .titlebar {
+  background-image: var(--lp-linen);
+  background-repeat: repeat;
+}
+
+/* 侧栏与正文之间：用两者之间那条 3px 的拖拽把手画一根 1px 发丝线。
+   不占布局、不加元素，悬停时仍然交给核心做拖拽反馈。 */
+body:not(.is-mobile) .workspace-split.mod-sidedock > .workspace-leaf-resize-handle:not(:hover) {
+  background-image: linear-gradient(
+    to right,
+    transparent 0 1px,
+    var(--lp-rule) 1px 2px,
+    transparent 2px
+  );
+}
+
 /* —— 题名（inline title）：一条朱红短线压在上面，下面一根发丝线 —— */
 .inline-title {
   position: relative;
@@ -1310,10 +1328,10 @@ html.is-hidden-frameless .titlebar {
   color: var(--lp-vermilion);
 }
 
-/* —— 标签页：选中页顶一道朱线 —— */
+/* —— 标签页：顶栏并进纸面，只留一根发丝线收边 —— */
 .workspace-tab-header-container {
-  background: var(--lp-paper-2);
-  border-bottom: 1px solid var(--lp-rule-faint);
+  background: var(--background-primary);
+  border-bottom: 1px solid var(--lp-rule);
 }
 
 .workspace-tab-header {
